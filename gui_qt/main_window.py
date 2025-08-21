@@ -65,6 +65,26 @@ class MainWindow(QMainWindow):
         self.action_clear.triggered.connect(self.clear_log)
         toolbar.addAction(self.action_clear)
 
+        toolbar.addSeparator()
+
+        # Dark mode toggle
+        self.is_dark = False
+        self.action_dark = QAction("Dark Mode", self)
+        self.action_dark.setCheckable(True)
+        self.action_dark.toggled.connect(self.toggle_dark_mode)
+        toolbar.addAction(self.action_dark)
+
+        toolbar.addSeparator()
+
+        # Save/Load prompt
+        self.action_save_prompt = QAction("Save Prompt", self)
+        self.action_save_prompt.triggered.connect(self.save_prompt)
+        toolbar.addAction(self.action_save_prompt)
+
+        self.action_load_prompt = QAction("Load Prompt", self)
+        self.action_load_prompt.triggered.connect(self.load_prompt)
+        toolbar.addAction(self.action_load_prompt)
+
     def _init_body(self) -> None:
         central = QWidget()
         layout = QVBoxLayout(central)
@@ -76,8 +96,12 @@ class MainWindow(QMainWindow):
         self.input_prompt.setPlaceholderText("Describe the Android app you want...")
         self.button_send = QPushButton("Send")
         self.button_send.clicked.connect(self.on_send)
+        self.button_stop = QPushButton("Stop")
+        self.button_stop.setEnabled(False)
+        self.button_stop.clicked.connect(self.on_stop)
         prompt_row.addWidget(self.input_prompt, stretch=1)
         prompt_row.addWidget(self.button_send)
+        prompt_row.addWidget(self.button_stop)
 
         self.progress_bar = QProgressBar()
         self.progress_bar.setRange(0, 0)  # indeterminate
@@ -114,6 +138,7 @@ class MainWindow(QMainWindow):
             return
 
         self.button_send.setEnabled(False)
+        self.button_stop.setEnabled(True)
         self.progress_bar.setVisible(True)
         self.label_status.setText("Starting...")
         self.text_log.append("Starting agent...")
@@ -121,9 +146,12 @@ class MainWindow(QMainWindow):
         # Run in background thread to keep UI responsive
         import threading
 
+        self._stop_requested = False
         def runner():
             try:
                 def cb(phase: str, message: str) -> None:
+                    if self._stop_requested:
+                        raise RuntimeError("Stopped by user")
                     self.signals.progress.emit(f"{phase}: {message}")
 
                 result = self.agent.run(text, self.output_dir, progress_cb=cb)
@@ -143,14 +171,66 @@ class MainWindow(QMainWindow):
     def on_done(self, message: str) -> None:
         self.progress_bar.setVisible(False)
         self.button_send.setEnabled(True)
+        self.button_stop.setEnabled(False)
         self.label_status.setText("Done")
         self.text_log.append(message)
 
     def on_error(self, message: str) -> None:
         self.progress_bar.setVisible(False)
         self.button_send.setEnabled(True)
+        self.button_stop.setEnabled(False)
         self.label_status.setText("Error")
         self.text_log.append(f"Error: {message}")
+
+    # Extra features
+    def toggle_dark_mode(self, enabled: bool) -> None:
+        self.is_dark = enabled
+        if enabled:
+            # Simple dark palette via stylesheet
+            self.setStyleSheet(
+                """
+                QMainWindow { background: #202124; }
+                QWidget { color: #e8eaed; background: #202124; }
+                QLineEdit, QTextEdit { background: #303134; color: #e8eaed; border: 1px solid #5f6368; }
+                QPushButton { background: #3c4043; color: #e8eaed; border: 1px solid #5f6368; padding: 6px 12px; }
+                QPushButton:disabled { background: #2b2b2b; color: #8e8e8e; }
+                QToolBar { background: #202124; border-bottom: 1px solid #5f6368; }
+                QLabel { color: #e8eaed; }
+                QProgressBar { background: #303134; color: #e8eaed; border: 1px solid #5f6368; }
+                QProgressBar::chunk { background: #8ab4f8; }
+                """
+            )
+        else:
+            self.setStyleSheet("")
+
+    def save_prompt(self) -> None:
+        text = self.input_prompt.text()
+        if not text:
+            return
+        path, _ = QFileDialog.getSaveFileName(self, "Save Prompt", self.output_dir or os.getcwd(), "Text Files (*.txt)")
+        if path:
+            try:
+                with open(path, "w", encoding="utf-8") as f:
+                    f.write(text)
+                self.text_log.append(f"Saved prompt to {path}")
+            except Exception as e:
+                self.on_error(str(e))
+
+    def load_prompt(self) -> None:
+        path, _ = QFileDialog.getOpenFileName(self, "Load Prompt", self.output_dir or os.getcwd(), "Text Files (*.txt)")
+        if path:
+            try:
+                with open(path, "r", encoding="utf-8") as f:
+                    self.input_prompt.setText(f.read())
+                self.text_log.append(f"Loaded prompt from {path}")
+            except Exception as e:
+                self.on_error(str(e))
+
+    def on_stop(self) -> None:
+        # Cooperative stop flag - respected at each progress callback
+        self._stop_requested = True
+        self.label_status.setText("Stopping...")
+        self.text_log.append("Stopping requested by user...")
 
 
 def run_qt_app() -> None:
