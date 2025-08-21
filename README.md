@@ -41,6 +41,8 @@ python main.py
 
 The application will automatically download the required AI model on first run.
 
+For build/packaging details, see `BUILDING.md`.
+
 ## 📱 Usage
 
 ### 1. Launch the Application

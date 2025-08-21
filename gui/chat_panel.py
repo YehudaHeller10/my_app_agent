@@ -35,6 +35,9 @@ class ChatPanel(ttk.Frame):
         # Chat area
         self.create_chat_area()
 
+        # Steps area
+        self.create_steps_area()
+
         # Bottom input area
         self.create_input_area()
 
@@ -89,6 +92,31 @@ class ChatPanel(ttk.Frame):
 
         # Configure text tags for styling
         self.setup_text_tags()
+
+    def create_steps_area(self):
+        """Create step-by-step progress area like BASE44/BOLT.NEW"""
+        steps_container = ttk.LabelFrame(self, text="Build Steps", padding=5)
+        steps_container.grid(row=1, column=1, sticky='ns', padx=(0,5), pady=5)
+
+        self.steps = [
+            ("create_structure", "Creating project structure"),
+            ("gradle_files", "Generating Gradle and settings files"),
+            ("app_code", "Generating app source and resources"),
+            ("readme", "Creating README"),
+            ("sdk_check", "Checking Android SDK/JDK/Gradle"),
+            ("gradle_sync", "Syncing Gradle dependencies"),
+            ("assemble", "Building APK (assembleDebug)")
+        ]
+
+        self.step_vars = {}
+        self.step_labels = {}
+
+        for key, label in self.steps:
+            var = tk.StringVar(value=f"⏳ {label}")
+            self.step_vars[key] = var
+            lbl = ttk.Label(steps_container, textvariable=var)
+            lbl.pack(anchor='w')
+            self.step_labels[key] = lbl
 
     def setup_text_tags(self):
         """Setup text styling tags"""
@@ -474,22 +502,42 @@ Just describe your app idea and I'll start generating! 🚀"""
             # Get chat history for context
             chat_history = self.get_chat_history()
 
-            # Generate project
+            # UI step updates helper
+            def ui_step_update(step_key: str, message: str, phase: str):
+                def _do():
+                    if step_key in self.step_vars:
+                        if phase == 'start':
+                            self.step_vars[step_key].set(f"⏳ {message}")
+                        elif phase == 'done':
+                            self.step_vars[step_key].set(f"✅ {message}")
+                        elif phase == 'error':
+                            self.step_vars[step_key].set(f"❌ {message}")
+                self.chat_text.after(0, _do)
+
+            # Reset steps to pending
+            for key, label in self.steps:
+                ui_step_update(key, label, 'start')
+
+            # Generate project with progress callback
             result = self.project_generator.generate_project(
                 project_name=project_name,
                 description=chat_history,
-                output_dir=output_dir
+                output_dir=output_dir,
+                progress_callback=ui_step_update
             )
 
             if result['success']:
                 self.add_message("success",
                                  f"✅ Project generated successfully!\n"
                                  f"📁 Location: {result['project_path']}\n"
-                                 f"📱 Open in Android Studio to build and run.")
+                                 f"📱 Building APK...")
 
                 # Update current project
                 self.current_project = result['project_path']
                 self.project_label.config(text=f"Active: {project_name}")
+
+                # After generation, kick off APK build
+                self._build_apk_worker(result['project_path'], ui_step_update)
 
             else:
                 self.add_message("error", f"❌ Project generation failed: {result['error']}")
@@ -498,6 +546,33 @@ Just describe your app idea and I'll start generating! 🚀"""
             self.add_message("error", f"❌ Error during project generation: {str(e)}")
         finally:
             self.generation_finished()
+
+    def _build_apk_worker(self, project_path: str, ui_step_update: Callable[[str, str, str], None]):
+        """Check/install Android tools and build APK sequentially"""
+        def worker():
+            try:
+                # Lazy import to avoid GUI import cost
+                from core.android_builder import AndroidBuilder
+                builder = AndroidBuilder()
+
+                ui_step_update('sdk_check', 'Checking Android SDK/JDK/Gradle', 'start')
+                builder.ensure_tools()
+                ui_step_update('sdk_check', 'Checking Android SDK/JDK/Gradle', 'done')
+
+                ui_step_update('gradle_sync', 'Syncing Gradle dependencies', 'start')
+                builder.gradle_sync(project_path)
+                ui_step_update('gradle_sync', 'Syncing Gradle dependencies', 'done')
+
+                ui_step_update('assemble', 'Building APK (assembleDebug)', 'start')
+                apk_path = builder.assemble_debug(project_path)
+                ui_step_update('assemble', 'Building APK (assembleDebug)', 'done')
+
+                self.add_message('success', f"📦 APK ready: {apk_path}")
+            except Exception as e:
+                ui_step_update('assemble', f"Build failed: {e}", 'error')
+                self.add_message('error', f"❌ Build failed: {e}")
+
+        threading.Thread(target=worker, daemon=True).start()
 
     def get_chat_history(self) -> str:
         """Extract chat history for project generation"""
