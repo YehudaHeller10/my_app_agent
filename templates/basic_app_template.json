@@ -1,0 +1,71 @@
+{
+  "name": "Basic Android App",
+  "description": "A simple Android app with basic functionality",
+  "features": ["Single Activity", "Basic UI", "Material Design"],
+  "structure": {
+    "app": {
+      "src": {
+        "main": {
+          "java": {
+            "com": {
+              "example": {
+                "myapp": [
+                  "MainActivity.kt"
+                ]
+              }
+            }
+          },
+          "res": {
+            "layout": ["activity_main.xml"],
+            "values": ["strings.xml", "colors.xml", "themes.xml"],
+            "drawable": [],
+            "mipmap": []
+          },
+          "AndroidManifest.xml": "AndroidManifest.xml"
+        }
+      },
+      "build.gradle": "build.gradle"
+    },
+    "build.gradle": "build.gradle",
+    "settings.gradle": "settings.gradle",
+    "gradle.properties": "gradle.properties"
+  },
+  "files": {
+    "MainActivity.kt": {
+      "content": "package com.example.myapp\n\nimport android.os.Bundle\nimport androidx.appcompat.app.AppCompatActivity\nimport androidx.recyclerview.widget.LinearLayoutManager\nimport androidx.recyclerview.widget.RecyclerView\nimport com.google.android.material.floatingactionbutton.FloatingActionButton\n\nclass MainActivity : AppCompatActivity() {\n    private lateinit var recyclerView: RecyclerView\n    private lateinit var adapter: ItemAdapter\n    private val items = mutableListOf<String>()\n\n    override fun onCreate(savedInstanceState: Bundle?) {\n        super.onCreate(savedInstanceState)\n        setContentView(R.layout.activity_main)\n\n        recyclerView = findViewById(R.id.recyclerView)\n        adapter = ItemAdapter(items)\n        recyclerView.adapter = adapter\n        recyclerView.layoutManager = LinearLayoutManager(this)\n\n        val fab = findViewById<FloatingActionButton>(R.id.fab)\n        fab.setOnClickListener {\n            addItem()\n        }\n\n        // Add some sample items\n        items.add(\"Welcome to your new Android app!\")\n        items.add(\"Tap the + button to add more items\")\n        adapter.notifyDataSetChanged()\n    }\n\n    private fun addItem() {\n        val newItem = \"Item \" + items.size + 1\n        items.add(newItem)\n        adapter.notifyItemInserted(items.size - 1)\n    }\n}\n\nclass ItemAdapter(private val items: List<String>) : RecyclerView.Adapter<ItemAdapter.ViewHolder>() {\n    class ViewHolder(val textView: android.widget.TextView) : RecyclerView.ViewHolder(textView)\n\n    override fun onCreateViewHolder(parent: android.view.ViewGroup, viewType: Int): ViewHolder {\n        val textView = android.widget.TextView(parent.context).apply {\n            layoutParams = android.view.ViewGroup.LayoutParams(\n                android.view.ViewGroup.LayoutParams.MATCH_PARENT,\n                android.view.ViewGroup.LayoutParams.WRAP_CONTENT\n            )\n            setPadding(20, 20, 20, 20)\n            textSize = 16f\n        }\n        return ViewHolder(textView)\n    }\n\n    override fun onBindViewHolder(holder: ViewHolder, position: Int) {\n        holder.textView.text = items[position]\n    }\n\n    override fun getItemCount() = items.size\n}",
+      "type": "kotlin"
+    },
+    "activity_main.xml": {
+      "content": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\n    android:layout_width=\"match_parent\"\n    android:layout_height=\"match_parent\">\n\n    <androidx.recyclerview.widget.RecyclerView\n        android:id=\"@+id/recyclerView\"\n        android:layout_width=\"match_parent\"\n        android:layout_height=\"match_parent\"\n        android:padding=\"16dp\" />\n\n    <com.google.android.material.floatingactionbutton.FloatingActionButton\n        android:id=\"@+id/fab\"\n        android:layout_width=\"wrap_content\"\n        android:layout_height=\"wrap_content\"\n        android:layout_gravity=\"bottom|end\"\n        android:layout_margin=\"16dp\"\n        android:src=\"@android:drawable/ic_input_add\"\n        app:fabSize=\"normal\" />\n\n</androidx.coordinatorlayout.widget.CoordinatorLayout>",
+      "type": "xml"
+    },
+    "strings.xml": {
+      "content": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>\n    <string name=\"app_name\">My App</string>\n    <string name=\"add_item\">Add Item</string>\n</resources>",
+      "type": "xml"
+    },
+    "colors.xml": {
+      "content": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>\n    <color name=\"purple_200\">#FFBB86FC</color>\n    <color name=\"purple_500\">#FF6200EE</color>\n    <color name=\"purple_700\">#FF3700B3</color>\n    <color name=\"teal_200\">#FF03DAC5</color>\n    <color name=\"teal_700\">#FF018786</color>\n    <color name=\"black\">#FF000000</color>\n    <color name=\"white\">#FFFFFFFF</color>\n</resources>",
+      "type": "xml"
+    },
+    "themes.xml": {
+      "content": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>\n    <style name=\"Theme.MyApp\" parent=\"Theme.MaterialComponents.DayNight.DarkActionBar\">\n        <item name=\"colorPrimary\">@color/purple_500</item>\n        <item name=\"colorPrimaryVariant\">@color/purple_700</item>\n        <item name=\"colorOnPrimary\">@color/white</item>\n        <item name=\"colorSecondary\">@color/teal_200</item>\n        <item name=\"colorSecondaryVariant\">@color/teal_700</item>\n        <item name=\"colorOnSecondary\">@color/black</item>\n        <item name=\"android:statusBarColor\">?attr/colorPrimaryVariant</item>\n    </style>\n</resources>",
+      "type": "xml"
+    },
+    "AndroidManifest.xml": {
+      "content": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    package=\"com.example.myapp\">\n\n    <application\n        android:allowBackup=\"true\"\n        android:icon=\"@mipmap/ic_launcher\"\n        android:label=\"@string/app_name\"\n        android:roundIcon=\"@mipmap/ic_launcher_round\"\n        android:supportsRtl=\"true\"\n        android:theme=\"@style/Theme.MyApp\">\n        <activity\n            android:name=\".MainActivity\"\n            android:exported=\"true\">\n            <intent-filter>\n                <action android:name=\"android.intent.action.MAIN\" />\n                <category android:name=\"android.intent.category.LAUNCHER\" />\n            </intent-filter>\n        </activity>\n    </application>\n\n</manifest>",
+      "type": "xml"
+    },
+    "build.gradle": {
+      "content": "plugins {\n    id 'com.android.application'\n    id 'org.jetbrains.kotlin.android'\n}\n\nandroid {\n    namespace 'com.example.myapp'\n    compileSdk 34\n\n    defaultConfig {\n        applicationId \"com.example.myapp\"\n        minSdk 24\n        targetSdk 34\n        versionCode 1\n        versionName \"1.0\"\n\n        testInstrumentationRunner \"androidx.test.runner.AndroidJUnitRunner\"\n    }\n\n    buildTypes {\n        release {\n            minifyEnabled false\n            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'\n        }\n    }\n    compileOptions {\n        sourceCompatibility JavaVersion.VERSION_1_8\n        targetCompatibility JavaVersion.VERSION_1_8\n    }\n    kotlinOptions {\n        jvmTarget = '1.8'\n    }\n}\n\ndependencies {\n    implementation 'androidx.core:core-ktx:1.12.0'\n    implementation 'androidx.appcompat:appcompat:1.6.1'\n    implementation 'com.google.android.material:material:1.11.0'\n    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'\n    implementation 'androidx.recyclerview:recyclerview:1.3.2'\n    testImplementation 'junit:junit:4.13.2'\n    androidTestImplementation 'androidx.test.ext:junit:1.1.5'\n    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'\n}",
+      "type": "gradle"
+    },
+    "settings.gradle": {
+      "content": "pluginManagement {\n    repositories {\n        google()\n        mavenCentral()\n        gradlePluginPortal()\n    }\n}\ndependencyResolutionManagement {\n    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)\n    repositories {\n        google()\n        mavenCentral()\n    }\n}\n\nrootProject.name = \"MyApp\"\ninclude ':app'",
+      "type": "gradle"
+    },
+    "gradle.properties": {
+      "content": "# Project-wide Gradle settings.\n# IDE (e.g. Android Studio) users:\n# Gradle settings configured through the IDE *will override*\n# any settings specified in this file.\n# For more details on how to configure your build environment visit\n# http://www.gradle.org/docs/current/userguide/build_environment.html\n# Specifies the JVM arguments used for the daemon process.\n# The setting is particularly useful for tweaking memory settings.\norg.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8\n# When configured, Gradle will run in incubating parallel mode.\n# This option should only be used with decoupled projects. More details, visit\n# http://www.gradle.org/docs/current/userguide/multi_project_builds.html#sec:decoupled_projects\n# org.gradle.parallel=true\n# AndroidX package structure to make it clearer which packages are bundled with the\n# Android operating system, and which are packaged with your app's APK\n# https://developer.android.com/topic/libraries/support-library/androidx-rn\nandroid.useAndroidX=true\n# Kotlin code style for this project: \"official\" or \"obsolete\":\nkotlin.code.style=official\n# Enables namespacing of each library's R class so that its R class includes only the\n# resources declared in the library itself and none from the library's dependencies,\n# thereby reducing the size of the R class for that library\nandroid.nonTransitiveRClass=true",
+      "type": "properties"
+    }
+  }
+}

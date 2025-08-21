@@ -1,0 +1,11 @@
+{
+  "generation_params": {
+    "max_tokens": 2048,
+    "temp": 0.1,
+    "top_p": 0.95,
+    "repeat_penalty": 1.1,
+    "streaming": true
+  },
+  "model_path": "C:/Users/yehudah/OneDrive - ARO Volcani Center/Desktop/localllm-main/models/orca-mini-3b-gguf2-q4_0.gguf",
+  "last_updated": 1755763728.946187
+}

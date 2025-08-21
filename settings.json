@@ -1,0 +1,28 @@
+{
+  "model": {
+    "path": "C:/Users/yehudah/OneDrive - ARO Volcani Center/Desktop/localllm-main/models/orca-mini-3b-gguf2-q4_0.gguf",
+    "max_tokens": 2048,
+    "temperature": 0.1,
+    "top_p": 0.95,
+    "repeat_penalty": 1.1
+  },
+  "project": {
+    "output_directory": "C:\\Users\\yehudah\\AndroidProjects",
+    "min_sdk": 24,
+    "target_sdk": 34,
+    "compile_sdk": 34,
+    "language": "Kotlin"
+  },
+  "ui": {
+    "theme": "System",
+    "font_size": 10,
+    "remember_size": true,
+    "auto_save": true
+  },
+  "advanced": {
+    "memory_limit": 2048,
+    "thread_count": 4,
+    "enable_logging": false,
+    "show_debug": false
+  }
+}

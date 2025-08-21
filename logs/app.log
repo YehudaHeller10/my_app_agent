@@ -1,0 +1,769 @@
+2025-08-21 09:44:48,229 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+You are a helpful AI coding assistant specialized in Android development.
+
+Your capabilities:
+- Generate Android applications in Kotlin
+- Design Material Design UIs
+- Implement basic Room databases
+- Create simple REST API integrations
+- Follow Android best practices
+
+Keep responses concise and focused on one task at a time.
+
+
+
+User: hi
+
+Assistant:
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 09:44:52,865 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+You are a helpful AI coding assistant specialized in Android development.
+
+Your capabilities:
+- Generate Android applications in Kotlin
+- Design Material Design UIs
+- Implement basic Room databases
+- Create simple REST API integrations
+- Follow Android best practices
+
+Keep responses concise and focused on one task at a time.
+
+
+
+Previous conversation:
+User: hi
+Assistant: 
+
+User: hello
+
+Assistant:
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 09:45:14,868 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+You are a helpful AI coding assistant specialized in Android development.
+
+Your capabilities:
+- Generate Android applications in Kotlin
+- Design Material Design UIs
+- Implement basic Room databases
+- Create simple REST API integrations
+- Follow Android best practices
+
+Keep responses concise and focused on one task at a time.
+
+
+
+Previous conversation:
+User: hi
+Assistant: 
+User: hello
+Assistant: 
+
+User: hi
+
+Assistant:
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 09:45:49,373 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+You are a helpful AI coding assistant specialized in Android development.
+
+Your capabilities:
+- Generate Android applications in Kotlin
+- Design Material Design UIs
+- Implement basic Room databases
+- Create simple REST API integrations
+- Follow Android best practices
+
+Keep responses concise and focused on one task at a time.
+
+
+
+Previous conversation:
+Assistant: 
+User: hello
+Assistant: 
+User: hi
+Assistant: 
+
+User: Build a weather app that shows current weather conditions, 5-day forecast, and location-based weather. Use OpenWeatherMap API and include beautiful weather icons.
+
+Assistant:
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 09:47:23,846 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+You are a helpful AI coding assistant specialized in Android development.
+
+Your capabilities:
+- Generate Android applications in Kotlin
+- Design Material Design UIs
+- Implement basic Room databases
+- Create simple REST API integrations
+- Follow Android best practices
+
+Keep responses concise and focused on one task at a time.
+
+
+
+User: hello
+
+Assistant:
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 09:47:53,161 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+You are a helpful AI coding assistant specialized in Android development.
+
+Your capabilities:
+- Generate Android applications in Kotlin
+- Design Material Design UIs
+- Implement basic Room databases
+- Create simple REST API integrations
+- Follow Android best practices
+
+Keep responses concise and focused on one task at a time.
+
+
+
+Previous conversation:
+User: hello
+Assistant: 
+
+User: can you help me?
+
+Assistant:
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 09:47:56,232 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+You are a helpful AI coding assistant specialized in Android development.
+
+Your capabilities:
+- Generate Android applications in Kotlin
+- Design Material Design UIs
+- Implement basic Room databases
+- Create simple REST API integrations
+- Follow Android best practices
+
+Keep responses concise and focused on one task at a time.
+
+
+
+Previous conversation:
+User: hello
+Assistant: 
+User: can you help me?
+Assistant: 
+
+User: hi
+
+Assistant:
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 10:08:37,190 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+You are a helpful AI coding assistant specialized in Android development.
+
+Your capabilities:
+- Generate Android applications in Kotlin
+- Design Material Design UIs
+- Implement basic Room databases
+- Create simple REST API integrations
+- Follow Android best practices
+
+Keep responses concise and focused on one task at a time.
+
+
+
+User: hi
+
+Assistant:
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 10:08:37,191 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+hi
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 10:09:01,135 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+You are a helpful AI coding assistant specialized in Android development.
+
+Your capabilities:
+- Generate Android applications in Kotlin
+- Design Material Design UIs
+- Implement basic Room databases
+- Create simple REST API integrations
+- Follow Android best practices
+
+Keep responses concise and focused on one task at a time.
+
+
+
+Previous conversation:
+User: hi
+Assistant: 
+
+User: build timer app
+
+Assistant:
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 10:09:01,136 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+build timer app
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 10:09:12,047 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+You are a helpful AI coding assistant specialized in Android development.
+
+Your capabilities:
+- Generate Android applications in Kotlin
+- Design Material Design UIs
+- Implement basic Room databases
+- Create simple REST API integrations
+- Follow Android best practices
+
+Keep responses concise and focused on one task at a time.
+
+
+
+Previous conversation:
+User: hi
+Assistant: 
+User: build timer app
+Assistant: 
+
+User: hello?
+
+Assistant:
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 10:09:12,048 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+hello?
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 10:09:28,899 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+You are a helpful AI coding assistant specialized in Android development.
+
+Your capabilities:
+- Generate Android applications in Kotlin
+- Design Material Design UIs
+- Implement basic Room databases
+- Create simple REST API integrations
+- Follow Android best practices
+
+Keep responses concise and focused on one task at a time.
+
+
+
+Previous conversation:
+Assistant: 
+User: build timer app
+Assistant: 
+User: hello?
+Assistant: 
+
+User: hi
+
+Assistant:
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 10:09:28,899 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+hi
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 10:09:33,950 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+You are a helpful AI coding assistant specialized in Android development.
+
+Your capabilities:
+- Generate Android applications in Kotlin
+- Design Material Design UIs
+- Implement basic Room databases
+- Create simple REST API integrations
+- Follow Android best practices
+
+Keep responses concise and focused on one task at a time.
+
+
+
+Previous conversation:
+Assistant: 
+User: hello?
+Assistant: 
+User: hi
+Assistant: 
+
+User: Create a todo list app with add, edit, delete, and mark as complete functionality. Include a modern Material Design UI with RecyclerView and Room database.
+
+Assistant:
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 10:09:33,950 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+Create a todo list app with add, edit, delete, and mark as complete functionality. Include a modern Material Design UI with RecyclerView and Room database.
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 10:09:36,001 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+You are a helpful AI coding assistant specialized in Android development.
+
+Your capabilities:
+- Generate Android applications in Kotlin
+- Design Material Design UIs
+- Implement basic Room databases
+- Create simple REST API integrations
+- Follow Android best practices
+
+Keep responses concise and focused on one task at a time.
+
+
+
+Previous conversation:
+Assistant: 
+User: hi
+Assistant: 
+User: Create a todo list app with add, edit, delete, and mark as complete functionality. Include a modern Material Design UI with RecyclerView and Room database.
+Assistant: 
+
+User: Create a modern calculator app with basic arithmetic operations, scientific functions, and a clean Material Design interface.
+
+Assistant:
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 10:09:36,002 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+Create a modern calculator app with basic arithmetic operations, scientific functions, and a clean Material Design interface.
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 10:20:05,137 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+You are a helpful AI coding assistant specialized in Android development.
+
+Your capabilities:
+- Generate Android applications in Kotlin
+- Design Material Design UIs
+- Implement basic Room databases
+- Create simple REST API integrations
+- Follow Android best practices
+
+Keep responses concise and focused on one task at a time.
+
+### Instruction:
+hi
+
+### Response:
+
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 10:20:05,137 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+hi
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 10:20:12,722 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+You are a helpful AI coding assistant specialized in Android development.
+
+Your capabilities:
+- Generate Android applications in Kotlin
+- Design Material Design UIs
+- Implement basic Room databases
+- Create simple REST API integrations
+- Follow Android best practices
+
+Keep responses concise and focused on one task at a time.
+
+### Instruction:
+h
+
+### Response:
+
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 10:20:12,723 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+h
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 10:20:25,628 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+You are a helpful AI coding assistant specialized in Android development.
+
+Your capabilities:
+- Generate Android applications in Kotlin
+- Design Material Design UIs
+- Implement basic Room databases
+- Create simple REST API integrations
+- Follow Android best practices
+
+Keep responses concise and focused on one task at a time.
+
+### Instruction:
+hi
+
+### Response:
+
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 10:20:25,628 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+hi
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 10:20:34,403 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+You are a helpful AI coding assistant specialized in Android development.
+
+Your capabilities:
+- Generate Android applications in Kotlin
+- Design Material Design UIs
+- Implement basic Room databases
+- Create simple REST API integrations
+- Follow Android best practices
+
+Keep responses concise and focused on one task at a time.
+
+### Instruction:
+hi
+
+### Response:
+
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 10:20:34,403 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+hi
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 10:20:47,450 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+You are a helpful AI coding assistant specialized in Android development.
+
+Your capabilities:
+- Generate Android applications in Kotlin
+- Design Material Design UIs
+- Implement basic Room databases
+- Create simple REST API integrations
+- Follow Android best practices
+
+Keep responses concise and focused on one task at a time.
+
+### Instruction:
+Create a todo list app with add, edit, delete, and mark as complete functionality. Include a modern Material Design UI with RecyclerView and Room database.
+
+### Response:
+
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 10:20:47,450 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+Create a todo list app with add, edit, delete, and mark as complete functionality. Include a modern Material Design UI with RecyclerView and Room database.
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 10:23:00,111 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+You are a helpful AI coding assistant specialized in Android development.
+
+Your capabilities:
+- Generate Android applications in Kotlin
+- Design Material Design UIs
+- Implement basic Room databases
+- Create simple REST API integrations
+- Follow Android best practices
+
+Keep responses concise and focused on one task at a time.
+
+### Instruction:
+you speak hebrew?
+
+### Response:
+
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 10:23:00,111 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+you speak hebrew?
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 10:23:06,221 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+You are a helpful AI coding assistant specialized in Android development.
+
+Your capabilities:
+- Generate Android applications in Kotlin
+- Design Material Design UIs
+- Implement basic Room databases
+- Create simple REST API integrations
+- Follow Android best practices
+
+Keep responses concise and focused on one task at a time.
+
+### Instruction:
+hi
+
+### Response:
+
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 10:23:06,222 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+hi
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 10:23:09,624 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+You are a helpful AI coding assistant specialized in Android development.
+
+Your capabilities:
+- Generate Android applications in Kotlin
+- Design Material Design UIs
+- Implement basic Room databases
+- Create simple REST API integrations
+- Follow Android best practices
+
+Keep responses concise and focused on one task at a time.
+
+### Instruction:
+hello
+
+### Response:
+
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 10:23:09,625 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+hello
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 10:23:12,672 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+You are a helpful AI coding assistant specialized in Android development.
+
+Your capabilities:
+- Generate Android applications in Kotlin
+- Design Material Design UIs
+- Implement basic Room databases
+- Create simple REST API integrations
+- Follow Android best practices
+
+Keep responses concise and focused on one task at a time.
+
+### Instruction:
+help?
+
+### Response:
+
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 10:23:12,672 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+help?
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 11:06:02,065 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+You are a helpful AI coding assistant specialized in Android development.
+
+Your capabilities:
+- Generate Android applications in Kotlin
+- Design Material Design UIs
+- Implement basic Room databases
+- Create simple REST API integrations
+- Follow Android best practices
+
+Keep responses concise and focused on one task at a time.
+
+### Instruction:
+hi
+
+### Response:
+
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 11:06:02,066 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+hi
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 11:06:25,352 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+You are a helpful AI coding assistant specialized in Android development.
+
+Your capabilities:
+- Generate Android applications in Kotlin
+- Design Material Design UIs
+- Implement basic Room databases
+- Create simple REST API integrations
+- Follow Android best practices
+
+Keep responses concise and focused on one task at a time.
+
+### Instruction:
+hi
+
+### Response:
+
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 11:06:25,353 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+hi
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 11:09:01,340 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+You are a helpful AI coding assistant specialized in Android development.
+
+Your capabilities:
+- Generate Android applications in Kotlin
+- Design Material Design UIs
+- Implement basic Room databases
+- Create simple REST API integrations
+- Follow Android best practices
+
+Keep responses concise and focused on one task at a time.
+
+### Instruction:
+hello
+
+### Response:
+
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 11:09:01,342 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+hello
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 11:09:04,501 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+You are a helpful AI coding assistant specialized in Android development.
+
+Your capabilities:
+- Generate Android applications in Kotlin
+- Design Material Design UIs
+- Implement basic Room databases
+- Create simple REST API integrations
+- Follow Android best practices
+
+Keep responses concise and focused on one task at a time.
+
+### Instruction:
+hi
+
+### Response:
+
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 11:09:04,502 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+hi
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 11:16:25,309 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+You are a helpful AI coding assistant specialized in Android development.
+
+Your capabilities:
+- Generate Android applications in Kotlin
+- Design Material Design UIs
+- Implement basic Room databases
+- Create simple REST API integrations
+- Follow Android best practices
+
+Keep responses concise and focused on one task at a time.
+
+### Instruction:
+hello
+
+### Response:
+
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 11:17:33,619 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+You are a helpful AI coding assistant specialized in Android development.
+
+Your capabilities:
+- Generate Android applications in Kotlin
+- Design Material Design UIs
+- Implement basic Room databases
+- Create simple REST API integrations
+- Follow Android best practices
+
+Keep responses concise and focused on one task at a time.
+
+### Instruction:
+thx
+
+### Response:
+
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 11:19:59,514 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+You are a helpful AI coding assistant specialized in Android development.
+
+Your capabilities:
+- Generate Android applications in Kotlin
+- Design Material Design UIs
+- Implement basic Room databases
+- Create simple REST API integrations
+- Follow Android best practices
+
+Keep responses concise and focused on one task at a time.
+
+### Instruction:
+create a calculator app
+
+### Response:
+
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 11:21:27,571 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+### System:
+You are an AI assistant that follows instruction extremely well. Help as much as you can.
+
+### User:
+You are a helpful AI coding assistant specialized in Android development.
+
+Your capabilities:
+- Generate Android applications in Kotlin
+- Design Material Design UIs
+- Implement basic Room databases
+- Create simple REST API integrations
+- Follow Android best practices
+
+Keep responses concise and focused on one task at a time.
+
+User: hi
+
+Assistant:
+### Response:
+
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 11:22:03,268 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+### System:
+You are an AI assistant that follows instruction extremely well. Help as much as you can.
+
+### User:
+You are a helpful AI coding assistant specialized in Android development.
+
+Your capabilities:
+- Generate Android applications in Kotlin
+- Design Material Design UIs
+- Implement basic Room databases
+- Create simple REST API integrations
+- Follow Android best practices
+
+Keep responses concise and focused on one task at a time.
+
+User: אתה יודע עברית?
+
+Assistant:
+### Response:
+
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 11:22:39,090 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+### System:
+You are an AI assistant that follows instruction extremely well. Help as much as you can.
+
+### User:
+You are a helpful AI coding assistant specialized in Android development.
+
+Your capabilities:
+- Generate Android applications in Kotlin
+- Design Material Design UIs
+- Implement basic Room databases
+- Create simple REST API integrations
+- Follow Android best practices
+
+Keep responses concise and focused on one task at a time.
+
+User: Ok, lets talk in english, i want create calcuator app
+
+Assistant:
+### Response:
+
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 11:23:54,520 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+### System:
+You are an AI assistant that follows instruction extremely well. Help as much as you can.
+
+### User:
+You are a helpful AI coding assistant specialized in Android development.
+
+Your capabilities:
+- Generate Android applications in Kotlin
+- Design Material Design UIs
+- Implement basic Room databases
+- Create simple REST API integrations
+- Follow Android best practices
+
+Keep responses concise and focused on one task at a time.
+
+User: what llm model you are?
+
+Assistant:
+### Response:
+
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 11:24:15,812 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+### System:
+You are an AI assistant that follows instruction extremely well. Help as much as you can.
+
+### User:
+You are a helpful AI coding assistant specialized in Android development.
+
+Your capabilities:
+- Generate Android applications in Kotlin
+- Design Material Design UIs
+- Implement basic Room databases
+- Create simple REST API integrations
+- Follow Android best practices
+
+Keep responses concise and focused on one task at a time.
+
+User: what company created you
+
+Assistant:
+### Response:
+
+===/LLModel.prompt_model -- prompt/===
+2025-08-21 11:24:40,408 - gpt4all.pyllmodel - INFO - LLModel.prompt_model -- prompt:
+### System:
+You are an AI assistant that follows instruction extremely well. Help as much as you can.
+
+### User:
+You are a helpful AI coding assistant specialized in Android development.
+
+Your capabilities:
+- Generate Android applications in Kotlin
+- Design Material Design UIs
+- Implement basic Room databases
+- Create simple REST API integrations
+- Follow Android best practices
+
+Keep responses concise and focused on one task at a time.
+
+User: i meant what you version , name? model name?
+
+Assistant:
+### Response:
+
+===/LLModel.prompt_model -- prompt/===

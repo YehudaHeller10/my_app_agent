@@ -1,0 +1,226 @@
+import os
+import json
+from typing import Dict, List, Any
+
+
+class AndroidTemplates:
+    """
+    Provides pre-built Android project templates for common app types
+    """
+    
+    def __init__(self):
+        self.templates_dir = os.path.join(os.path.dirname(__file__), "..", "templates")
+        self.templates = self._load_templates()
+        
+    def _load_templates(self) -> Dict[str, Any]:
+        """Load available templates from JSON files"""
+        templates = {}
+        
+        # Load JSON template files
+        if os.path.exists(self.templates_dir):
+            for filename in os.listdir(self.templates_dir):
+                if filename.endswith('.json'):
+                    template_name = filename.replace('_template.json', '')
+                    try:
+                        with open(os.path.join(self.templates_dir, filename), 'r', encoding='utf-8') as f:
+                            templates[template_name] = json.load(f)
+                    except Exception as e:
+                        print(f"Failed to load template {filename}: {e}")
+        
+        # Add fallback templates if JSON files don't exist
+        if not templates:
+            templates = {
+                'basic_app': self._get_basic_app_template(),
+                'todo_app': self._get_todo_app_template()
+            }
+        
+        return templates
+        
+    def get_available_templates(self) -> List[str]:
+        """Get list of available template names"""
+        return list(self.templates.keys())
+        
+    def get_template(self, template_name: str) -> Dict[str, Any]:
+        """Get a specific template by name"""
+        return self.templates.get(template_name, {})
+        
+    def get_template_structure(self, template_name: str) -> Dict[str, Any]:
+        """Get the file structure for a template"""
+        template = self.get_template(template_name)
+        return template.get('structure', {})
+        
+    def get_template_files(self, template_name: str) -> Dict[str, Any]:
+        """Get the files for a template"""
+        template = self.get_template(template_name)
+        return template.get('files', {})
+        
+    def _get_basic_app_template(self) -> Dict[str, Any]:
+        """Basic Android app template - fallback"""
+        return {
+            'name': 'Basic App',
+            'description': 'A simple Android app with basic functionality',
+            'features': ['Single Activity', 'Basic UI', 'Material Design'],
+            'structure': {
+                'app': {
+                    'src': {
+                        'main': {
+                            'java': {
+                                'com': {
+                                    'example': {
+                                        'myapp': ['MainActivity.kt']
+                                    }
+                                }
+                            },
+                            'res': {
+                                'layout': ['activity_main.xml'],
+                                'values': ['strings.xml', 'colors.xml', 'themes.xml']
+                            },
+                            'AndroidManifest.xml': 'AndroidManifest.xml'
+                        }
+                    },
+                    'build.gradle': 'build.gradle'
+                },
+                'build.gradle': 'build.gradle',
+                'settings.gradle': 'settings.gradle',
+                'gradle.properties': 'gradle.properties'
+            },
+            'files': {
+                'MainActivity.kt': {
+                    'content': 'package com.example.myapp\n\nimport android.os.Bundle\nimport androidx.appcompat.app.AppCompatActivity\nimport androidx.recyclerview.widget.LinearLayoutManager\nimport androidx.recyclerview.widget.RecyclerView\nimport com.google.android.material.floatingactionbutton.FloatingActionButton\n\nclass MainActivity : AppCompatActivity() {\n    private lateinit var recyclerView: RecyclerView\n    private lateinit var adapter: ItemAdapter\n    private val items = mutableListOf<String>()\n\n    override fun onCreate(savedInstanceState: Bundle?) {\n        super.onCreate(savedInstanceState)\n        setContentView(R.layout.activity_main)\n\n        recyclerView = findViewById(R.id.recyclerView)\n        adapter = ItemAdapter(items)\n        recyclerView.adapter = adapter\n        recyclerView.layoutManager = LinearLayoutManager(this)\n\n        val fab = findViewById<FloatingActionButton>(R.id.fab)\n        fab.setOnClickListener {\n            addItem()\n        }\n\n        // Add some sample items\n        items.add(\"Welcome to your new Android app!\")\n        items.add(\"Tap the + button to add more items\")\n        adapter.notifyDataSetChanged()\n    }\n\n    private fun addItem() {\n        val newItem = \"Item \${items.size + 1}\"\n        items.add(newItem)\n        adapter.notifyItemInserted(items.size - 1)\n    }\n}\n\nclass ItemAdapter(private val items: List<String>) : RecyclerView.Adapter<ItemAdapter.ViewHolder>() {\n    class ViewHolder(val textView: android.widget.TextView) : RecyclerView.ViewHolder(textView)\n\n    override fun onCreateViewHolder(parent: android.view.ViewGroup, viewType: Int): ViewHolder {\n        val textView = android.widget.TextView(parent.context).apply {\n            layoutParams = android.view.ViewGroup.LayoutParams(\n                android.view.ViewGroup.LayoutParams.MATCH_PARENT,\n                android.view.ViewGroup.LayoutParams.WRAP_CONTENT\n            )\n            setPadding(20, 20, 20, 20)\n            textSize = 16f\n        }\n        return ViewHolder(textView)\n    }\n\n    override fun onBindViewHolder(holder: ViewHolder, position: Int) {\n        holder.textView.text = items[position]\n    }\n\n    override fun getItemCount() = items.size\n}',
+                    'type': 'kotlin'
+                },
+                'activity_main.xml': {
+                    'content': '<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\n    android:layout_width=\"match_parent\"\n    android:layout_height=\"match_parent\">\n\n    <androidx.recyclerview.widget.RecyclerView\n        android:id=\"@+id/recyclerView\"\n        android:layout_width=\"match_parent\"\n        android:layout_height=\"match_parent\"\n        android:padding=\"16dp\" />\n\n    <com.google.android.material.floatingactionbutton.FloatingActionButton\n        android:id=\"@+id/fab\"\n        android:layout_width=\"wrap_content\"\n        android:layout_height=\"wrap_content\"\n        android:layout_gravity=\"bottom|end\"\n        android:layout_margin=\"16dp\"\n        android:src=\"@android:drawable/ic_input_add\"\n        app:fabSize=\"normal\" />\n\n</androidx.coordinatorlayout.widget.CoordinatorLayout>',
+                    'type': 'xml'
+                },
+                'strings.xml': {
+                    'content': '<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>\n    <string name=\"app_name\">My App</string>\n    <string name=\"add_item\">Add Item</string>\n</resources>',
+                    'type': 'xml'
+                },
+                'colors.xml': {
+                    'content': '<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>\n    <color name=\"purple_200\">#FFBB86FC</color>\n    <color name=\"purple_500\">#FF6200EE</color>\n    <color name=\"purple_700\">#FF3700B3</color>\n    <color name=\"teal_200\">#FF03DAC5</color>\n    <color name=\"teal_700\">#FF018786</color>\n    <color name=\"black\">#FF000000</color>\n    <color name=\"white\">#FFFFFFFF</color>\n</resources>',
+                    'type': 'xml'
+                },
+                'themes.xml': {
+                    'content': '<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>\n    <style name=\"Theme.MyApp\" parent=\"Theme.MaterialComponents.DayNight.DarkActionBar\">\n        <item name=\"colorPrimary\">@color/purple_500</item>\n        <item name=\"colorPrimaryVariant\">@color/purple_700</item>\n        <item name=\"colorOnPrimary\">@color/white</item>\n        <item name=\"colorSecondary\">@color/teal_200</item>\n        <item name=\"colorSecondaryVariant\">@color/teal_700</item>\n        <item name=\"colorOnSecondary\">@color/black</item>\n        <item name=\"android:statusBarColor\">?attr/colorPrimaryVariant</item>\n    </style>\n</resources>',
+                    'type': 'xml'
+                },
+                'AndroidManifest.xml': {
+                    'content': '<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    package=\"com.example.myapp\">\n\n    <application\n        android:allowBackup=\"true\"\n        android:icon=\"@mipmap/ic_launcher\"\n        android:label=\"@string/app_name\"\n        android:roundIcon=\"@mipmap/ic_launcher_round\"\n        android:supportsRtl=\"true\"\n        android:theme=\"@style/Theme.MyApp\">\n        <activity\n            android:name=\".MainActivity\"\n            android:exported=\"true\">\n            <intent-filter>\n                <action android:name=\"android.intent.action.MAIN\" />\n                <category android:name=\"android.intent.category.LAUNCHER\" />\n            </intent-filter>\n        </activity>\n    </application>\n\n</manifest>',
+                    'type': 'xml'
+                },
+                'build.gradle': {
+                    'content': 'plugins {\n    id \'com.android.application\'\n    id \'org.jetbrains.kotlin.android\'\n}\n\nandroid {\n    namespace \'com.example.myapp\'\n    compileSdk 34\n\n    defaultConfig {\n        applicationId \"com.example.myapp\"\n        minSdk 24\n        targetSdk 34\n        versionCode 1\n        versionName \"1.0\"\n\n        testInstrumentationRunner \"androidx.test.runner.AndroidJUnitRunner\"\n    }\n\n    buildTypes {\n        release {\n            minifyEnabled false\n            proguardFiles getDefaultProguardFile(\'proguard-android-optimize.txt\'), \'proguard-rules.pro\'\n        }\n    }\n    compileOptions {\n        sourceCompatibility JavaVersion.VERSION_1_8\n        targetCompatibility JavaVersion.VERSION_1_8\n    }\n    kotlinOptions {\n        jvmTarget = \'1.8\'\n    }\n}\n\ndependencies {\n    implementation \'androidx.core:core-ktx:1.12.0\'\n    implementation \'androidx.appcompat:appcompat:1.6.1\'\n    implementation \'com.google.android.material:material:1.11.0\'\n    implementation \'androidx.constraintlayout:constraintlayout:2.1.4\'\n    implementation \'androidx.recyclerview:recyclerview:1.3.2\'\n    testImplementation \'junit:junit:4.13.2\'\n    androidTestImplementation \'androidx.test.ext:junit:1.1.5\'\n    androidTestImplementation \'androidx.test.espresso:espresso-core:3.5.1\'\n}',
+                    'type': 'gradle'
+                },
+                'settings.gradle': {
+                    'content': 'pluginManagement {\n    repositories {\n        google()\n        mavenCentral()\n        gradlePluginPortal()\n    }\n}\ndependencyResolutionManagement {\n    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)\n    repositories {\n        google()\n        mavenCentral()\n    }\n}\n\nrootProject.name = \"MyApp\"\ninclude \':app\'',
+                    'type': 'gradle'
+                },
+                'gradle.properties': {
+                    'content': '# Project-wide Gradle settings.\n# IDE (e.g. Android Studio) users:\n# Gradle settings configured through the IDE *will override*\n# any settings specified in this file.\n# For more details on how to configure your build environment visit\n# http://www.gradle.org/docs/current/userguide/build_environment.html\n# Specifies the JVM arguments used for the daemon process.\n# The setting is particularly useful for tweaking memory settings.\norg.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8\n# When configured, Gradle will run in incubating parallel mode.\n# This option should only be used with decoupled projects. More details, visit\n# http://www.gradle.org/docs/current/userguide/multi_project_builds.html#sec:decoupled_projects\n# org.gradle.parallel=true\n# AndroidX package structure to make it clearer which packages are bundled with the\n# Android operating system, and which are packaged with your app\'s APK\n# https://developer.android.com/topic/libraries/support-library/androidx-rn\nandroid.useAndroidX=true\n# Kotlin code style for this project: \"official\" or \"obsolete\":\nkotlin.code.style=official\n# Enables namespacing of each library\'s R class so that its R class includes only the\n# resources declared in the library itself and none from the library\'s dependencies,\n# thereby reducing the size of the R class for that library\nandroid.nonTransitiveRClass=true',
+                    'type': 'properties'
+                }
+            }
+        }
+        
+    def _get_todo_app_template(self) -> Dict[str, Any]:
+        """Todo app template - fallback"""
+        return {
+            'name': 'Todo App',
+            'description': 'A todo list app with add, edit, delete functionality',
+            'features': ['CRUD Operations', 'Room Database', 'RecyclerView', 'Material Design'],
+            'structure': {
+                'app': {
+                    'src': {
+                        'main': {
+                            'java': {
+                                'com': {
+                                    'example': {
+                                        'todoapp': [
+                                            'MainActivity.kt',
+                                            'TodoAdapter.kt',
+                                            'TodoViewModel.kt',
+                                            'Todo.kt',
+                                            'TodoDao.kt',
+                                            'AppDatabase.kt'
+                                        ]
+                                    }
+                                }
+                            },
+                            'res': {
+                                'layout': ['activity_main.xml', 'item_todo.xml'],
+                                'values': ['strings.xml', 'colors.xml', 'themes.xml']
+                            },
+                            'AndroidManifest.xml': 'AndroidManifest.xml'
+                        }
+                    },
+                    'build.gradle': 'build.gradle'
+                },
+                'build.gradle': 'build.gradle',
+                'settings.gradle': 'settings.gradle',
+                'gradle.properties': 'gradle.properties'
+            },
+            'files': {
+                'MainActivity.kt': {
+                    'content': 'package com.example.todoapp\n\nimport android.os.Bundle\nimport androidx.appcompat.app.AppCompatActivity\nimport androidx.lifecycle.ViewModelProvider\nimport androidx.recyclerview.widget.LinearLayoutManager\nimport androidx.recyclerview.widget.RecyclerView\nimport com.google.android.material.floatingactionbutton.FloatingActionButton\nimport com.google.android.material.textfield.TextInputEditText\nimport com.google.android.material.dialog.MaterialAlertDialogBuilder\n\nclass MainActivity : AppCompatActivity() {\n    private lateinit var recyclerView: RecyclerView\n    private lateinit var adapter: TodoAdapter\n    private lateinit var viewModel: TodoViewModel\n\n    override fun onCreate(savedInstanceState: Bundle?) {\n        super.onCreate(savedInstanceState)\n        setContentView(R.layout.activity_main)\n\n        viewModel = ViewModelProvider(this)[TodoViewModel::class.java]\n        recyclerView = findViewById(R.id.recyclerView)\n        adapter = TodoAdapter(\n            onItemClick = { todo -> showEditDialog(todo) },\n            onItemLongClick = { todo -> showDeleteDialog(todo) }\n        )\n        recyclerView.adapter = adapter\n        recyclerView.layoutManager = LinearLayoutManager(this)\n\n        val fab = findViewById<FloatingActionButton>(R.id.fab)\n        fab.setOnClickListener {\n            showAddDialog()\n        }\n\n        // Observe todos\n        viewModel.allTodos.observe(this) { todos ->\n            adapter.submitList(todos)\n        }\n    }\n\n    private fun showAddDialog() {\n        val input = TextInputEditText(this)\n        input.hint = \"Enter todo text\"\n\n        MaterialAlertDialogBuilder(this)\n            .setTitle(\"Add Todo\")\n            .setView(input)\n            .setPositiveButton(\"Add\") { _, _ ->\n                val text = input.text.toString()\n                if (text.isNotEmpty()) {\n                    viewModel.insert(Todo(text))\n                }\n            }\n            .setNegativeButton(\"Cancel\", null)\n            .show()\n    }\n\n    private fun showEditDialog(todo: Todo) {\n        val input = TextInputEditText(this)\n        input.setText(todo.text)\n        input.hint = \"Enter todo text\"\n\n        MaterialAlertDialogBuilder(this)\n            .setTitle(\"Edit Todo\")\n            .setView(input)\n            .setPositiveButton(\"Update\") { _, _ ->\n                val text = input.text.toString()\n                if (text.isNotEmpty()) {\n                    viewModel.update(Todo(todo.id, text, todo.completed))\n                }\n            }\n            .setNegativeButton(\"Cancel\", null)\n            .show()\n    }\n\n    private fun showDeleteDialog(todo: Todo) {\n        MaterialAlertDialogBuilder(this)\n            .setTitle(\"Delete Todo\")\n            .setMessage(\"Are you sure you want to delete \'${todo.text}\'?\")\n            .setPositiveButton(\"Delete\") { _, _ ->\n                viewModel.delete(todo)\n            }\n            .setNegativeButton(\"Cancel\", null)\n            .show()\n    }\n}',
+                    'type': 'kotlin'
+                },
+                'TodoAdapter.kt': {
+                    'content': 'package com.example.todoapp\n\nimport android.view.LayoutInflater\nimport android.view.View\nimport android.view.ViewGroup\nimport android.widget.CheckBox\nimport android.widget.TextView\nimport androidx.recyclerview.widget.DiffUtil\nimport androidx.recyclerview.widget.ListAdapter\nimport androidx.recyclerview.widget.RecyclerView\n\nclass TodoAdapter(\n    private val onItemClick: (Todo) -> Unit,\n    private val onItemLongClick: (Todo) -> Unit\n) : ListAdapter<Todo, TodoAdapter.TodoViewHolder>(TodoDiffCallback()) {\n\n    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoViewHolder {\n        val view = LayoutInflater.from(parent.context)\n            .inflate(R.layout.item_todo, parent, false)\n        return TodoViewHolder(view)\n    }\n\n    override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {\n        holder.bind(getItem(position))\n    }\n\n    inner class TodoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {\n        private val textView: TextView = itemView.findViewById(R.id.todoText)\n        private val checkBox: CheckBox = itemView.findViewById(R.id.todoCheckbox)\n\n        fun bind(todo: Todo) {\n            textView.text = todo.text\n            checkBox.isChecked = todo.completed\n\n            itemView.setOnClickListener { onItemClick(todo) }\n            itemView.setOnLongClickListener { onItemLongClick(todo); true }\n            \n            checkBox.setOnCheckedChangeListener { _, isChecked ->\n                // Update completion status\n                // This would typically update the database\n            }\n        }\n    }\n}\n\nclass TodoDiffCallback : DiffUtil.ItemCallback<Todo>() {\n    override fun areItemsTheSame(oldItem: Todo, newItem: Todo): Boolean {\n        return oldItem.id == newItem.id\n    }\n\n    override fun areContentsTheSame(oldItem: Todo, newItem: Todo): Boolean {\n        return oldItem == newItem\n    }\n}',
+                    'type': 'kotlin'
+                },
+                'TodoViewModel.kt': {
+                    'content': 'package com.example.todoapp\n\nimport android.app.Application\nimport androidx.lifecycle.AndroidViewModel\nimport androidx.lifecycle.LiveData\nimport androidx.lifecycle.viewModelScope\nimport kotlinx.coroutines.launch\n\nclass TodoViewModel(application: Application) : AndroidViewModel(application) {\n    private val repository: TodoRepository\n    val allTodos: LiveData<List<Todo>>\n\n    init {\n        val dao = AppDatabase.getDatabase(application).todoDao()\n        repository = TodoRepository(dao)\n        allTodos = repository.allTodos\n    }\n\n    fun insert(todo: Todo) = viewModelScope.launch {\n        repository.insert(todo)\n    }\n\n    fun update(todo: Todo) = viewModelScope.launch {\n        repository.update(todo)\n    }\n\n    fun delete(todo: Todo) = viewModelScope.launch {\n        repository.delete(todo)\n    }\n}',
+                    'type': 'kotlin'
+                },
+                'Todo.kt': {
+                    'content': 'package com.example.todoapp\n\nimport androidx.room.Entity\nimport androidx.room.PrimaryKey\n\n@Entity(tableName = \"todos\")\ndata class Todo(\n    @PrimaryKey(autoGenerate = true)\n    val id: Int = 0,\n    val text: String,\n    val completed: Boolean = false\n)',
+                    'type': 'kotlin'
+                },
+                'TodoDao.kt': {
+                    'content': 'package com.example.todoapp\n\nimport androidx.lifecycle.LiveData\nimport androidx.room.*\n\n@Dao\ninterface TodoDao {\n    @Query(\"SELECT * FROM todos ORDER BY id DESC\")\n    fun getAllTodos(): LiveData<List<Todo>>\n\n    @Insert\n    suspend fun insert(todo: Todo)\n\n    @Update\n    suspend fun update(todo: Todo)\n\n    @Delete\n    suspend fun delete(todo: Todo)\n}',
+                    'type': 'kotlin'
+                },
+                'AppDatabase.kt': {
+                    'content': 'package com.example.todoapp\n\nimport android.content.Context\nimport androidx.room.Database\nimport androidx.room.Room\nimport androidx.room.RoomDatabase\n\n@Database(entities = [Todo::class], version = 1, exportSchema = false)\nabstract class AppDatabase : RoomDatabase() {\n    abstract fun todoDao(): TodoDao\n\n    companion object {\n        @Volatile\n        private var INSTANCE: AppDatabase? = null\n\n        fun getDatabase(context: Context): AppDatabase {\n            return INSTANCE ?: synchronized(this) {\n                val instance = Room.databaseBuilder(\n                    context.applicationContext,\n                    AppDatabase::class.java,\n                    \"todo_database\"\n                ).build()\n                INSTANCE = instance\n                instance\n            }\n        }\n    }\n}',
+                    'type': 'kotlin'
+                },
+                'activity_main.xml': {
+                    'content': '<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\n    android:layout_width=\"match_parent\"\n    android:layout_height=\"match_parent\">\n\n    <androidx.recyclerview.widget.RecyclerView\n        android:id=\"@+id/recyclerView\"\n        android:layout_width=\"match_parent\"\n        android:layout_height=\"match_parent\"\n        android:padding=\"16dp\" />\n\n    <com.google.android.material.floatingactionbutton.FloatingActionButton\n        android:id=\"@+id/fab\"\n        android:layout_width=\"wrap_content\"\n        android:layout_height=\"wrap_content\"\n        android:layout_gravity=\"bottom|end\"\n        android:layout_margin=\"16dp\"\n        android:src=\"@android:drawable/ic_input_add\"\n        app:fabSize=\"normal\" />\n\n</androidx.coordinatorlayout.widget.CoordinatorLayout>',
+                    'type': 'xml'
+                },
+                'item_todo.xml': {
+                    'content': '<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<com.google.android.material.card.MaterialCardView xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\n    android:layout_width=\"match_parent\"\n    android:layout_height=\"wrap_content\"\n    android:layout_margin=\"8dp\"\n    app:cardElevation=\"4dp\"\n    app:cardCornerRadius=\"8dp\">\n\n    <LinearLayout\n        android:layout_width=\"match_parent\"\n        android:layout_height=\"wrap_content\"\n        android:orientation=\"horizontal\"\n        android:padding=\"16dp\">\n\n        <CheckBox\n            android:id=\"@+id/todoCheckbox\"\n            android:layout_width=\"wrap_content\"\n            android:layout_height=\"wrap_content\"\n            android:layout_gravity=\"center_vertical\" />\n\n        <TextView\n            android:id=\"@+id/todoText\"\n            android:layout_width=\"0dp\"\n            android:layout_height=\"wrap_content\"\n            android:layout_weight=\"1\"\n            android:layout_gravity=\"center_vertical\"\n            android:layout_marginStart=\"16dp\"\n            android:textSize=\"16sp\" />\n\n    </LinearLayout>\n\n</com.google.android.material.card.MaterialCardView>',
+                    'type': 'xml'
+                },
+                'strings.xml': {
+                    'content': '<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>\n    <string name=\"app_name\">Todo App</string>\n    <string name=\"add_todo\">Add Todo</string>\n    <string name=\"edit_todo\">Edit Todo</n    <string name=\"delete_todo\">Delete Todo</string>\n</resources>',
+                    'type': 'xml'
+                },
+                'colors.xml': {
+                    'content': '<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>\n    <color name=\"purple_200\">#FFBB86FC</color>\n    <color name=\"purple_500\">#FF6200EE</color>\n    <color name=\"purple_700\">#FF3700B3</color>\n    <color name=\"teal_200\">#FF03DAC5</color>\n    <color name=\"teal_700\">#FF018786</color>\n    <color name=\"black\">#FF000000</color>\n    <color name=\"white\">#FFFFFFFF</color>\n</resources>',
+                    'type': 'xml'
+                },
+                'themes.xml': {
+                    'content': '<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>\n    <style name=\"Theme.TodoApp\" parent=\"Theme.MaterialComponents.DayNight.DarkActionBar\">\n        <item name=\"colorPrimary\">@color/purple_500</item>\n        <item name=\"colorPrimaryVariant\">@color/purple_700</item>\n        <item name=\"colorOnPrimary\">@color/white</item>\n        <item name=\"colorSecondary\">@color/teal_200</item>\n        <item name=\"colorSecondaryVariant\">@color/teal_700</item>\n        <item name=\"colorOnSecondary\">@color/black</item>\n        <item name=\"android:statusBarColor\">?attr/colorPrimaryVariant</item>\n    </style>\n</resources>',
+                    'type': 'xml'
+                },
+                'AndroidManifest.xml': {
+                    'content': '<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\n    package=\"com.example.todoapp\">\n\n    <application\n        android:allowBackup=\"true\"\n        android:icon=\"@mipmap/ic_launcher\"\n        android:label=\"@string/app_name\"\n        android:roundIcon=\"@mipmap/ic_launcher_round\"\n        android:supportsRtl=\"true\"\n        android:theme=\"@style/Theme.TodoApp\">\n        <activity\n            android:name=\".MainActivity\"\n            android:exported=\"true\">\n            <intent-filter>\n                <action android:name=\"android.intent.action.MAIN\" />\n                <category android:name=\"android.intent.category.LAUNCHER\" />\n            </intent-filter>\n        </activity>\n    </application>\n\n</manifest>',
+                    'type': 'xml'
+                },
+                'build.gradle': {
+                    'content': 'plugins {\n    id \'com.android.application\'\n    id \'org.jetbrains.kotlin.android\'\n    id \'kotlin-kapt\'\n}\n\nandroid {\n    namespace \'com.example.todoapp\'\n    compileSdk 34\n\n    defaultConfig {\n        applicationId \"com.example.todoapp\"\n        minSdk 24\n        targetSdk 34\n        versionCode 1\n        versionName \"1.0\"\n\n        testInstrumentationRunner \"androidx.test.runner.AndroidJUnitRunner\"\n    }\n\n    buildTypes {\n        release {\n            minifyEnabled false\n            proguardFiles getDefaultProguardFile(\'proguard-android-optimize.txt\'), \'proguard-rules.pro\'\n        }\n    }\n    compileOptions {\n        sourceCompatibility JavaVersion.VERSION_1_8\n        targetCompatibility JavaVersion.VERSION_1_8\n    }\n    kotlinOptions {\n        jvmTarget = \'1.8\'\n    }\n}\n\ndependencies {\n    implementation \'androidx.core:core-ktx:1.12.0\'\n    implementation \'androidx.core:core-ktx:1.12.0\'\n    implementation \'androidx.appcompat:appcompat:1.6.1\'\n    implementation \'com.google.android.material:material:1.11.0\'\n    implementation \'androidx.constraintlayout:constraintlayout:2.1.4\'\n    implementation \'androidx.recyclerview:recyclerview:1.3.2\'\n    implementation \'androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0\'\n    implementation \'androidx.lifecycle:lifecycle-livedata-ktx:2.7.0\'\n    implementation \'androidx.room:room-runtime:2.6.1\'\n    implementation \'androidx.room:room-ktx:2.6.1\'\n    kapt \'androidx.room:room-compiler:2.6.1\'\n    testImplementation \'junit:junit:4.13.2\'\n    androidTestImplementation \'androidx.test.ext:junit:1.1.5\'\n    androidTestImplementation \'androidx.test.espresso:espresso-core:3.5.1\'\n}',
+                    'type': 'gradle'
+                },
+                'settings.gradle': {
+                    'content': 'pluginManagement {\n    repositories {\n        google()\n        mavenCentral()\n        gradlePluginPortal()\n    }\n}\ndependencyResolutionManagement {\n    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)\n    repositories {\n        google()\n        mavenCentral()\n    }\n}\n\nrootProject.name = \"TodoApp\"\ninclude \':app\'',
+                    'type': 'gradle'
+                },
+                'gradle.properties': {
+                    'content': '# Project-wide Gradle settings.\n# IDE (e.g. Android Studio) users:\n# Gradle settings configured through the IDE *will override*\n# any settings specified in this file.\n# For more details on how to configure your build environment visit\n# http://www.gradle.org/docs/current/userguide/build_environment.html\n# Specifies the JVM arguments used for the daemon process.\n# The setting is particularly useful for tweaking memory settings.\norg.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8\n# When configured, Gradle will run in incubating parallel mode.\n# This option should only be used with decoupled projects. More details, visit\n# http://www.gradle.org/docs/current/userguide/multi_project_builds.html#sec:decoupled_projects\n# org.gradle.parallel=true\n# AndroidX package structure to make it clearer which packages are bundled with the\n# Android operating system, and which are packaged with your app\'s APK\n# https://developer.android.com/topic/libraries/support-library/androidx-rn\nandroid.useAndroidX=true\n# Kotlin code style for this project: \"official\" or \"obsolete\":\nkotlin.code.style=official\n# Enables namespacing of each library\'s R class so that its R class includes only the\n# resources declared in the library itself and none from the library\'s dependencies,\n# thereby reducing the size of the R class for that library\nandroid.nonTransitiveRClass=true',
+                    'type': 'properties'
+                }
+            }
+        }
