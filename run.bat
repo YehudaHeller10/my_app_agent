@@ -28,8 +28,8 @@ if errorlevel 1 (
 )
 
 REM Run the application
-echo Starting Android App Generator...
-python main.py
+echo Starting Android App Generator (Qt UI)...
+python main_qt.py
 
 REM If the application exits with an error, pause to show the error
 if errorlevel 1 (
