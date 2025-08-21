@@ -37,8 +37,8 @@ fi
 chmod +x run.py
 
 # Run the application
-echo "Starting Android App Generator..."
-python3 main.py
+echo "Starting Android App Generator (Qt UI)..."
+python3 main_qt.py
 
 # Check exit status
 if [ $? -ne 0 ]; then
