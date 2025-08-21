@@ -13,8 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -58,7 +57,7 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
     val uiState: UiState = viewModel.state.collectAsState().value
 
     AppScaffold(
-        title = "Agent Studio",
+        title = "Agent",
         onSettings = { /* TODO: settings */ },
         onHistory = { /* TODO: history */ }
     ) { innerPadding ->
@@ -69,19 +68,22 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
                 .padding(16.dp),
             verticalArrangement = Arrangement.Top
         ) {
-            OutlinedTextField(
-                value = promptText,
-                onValueChange = { promptText = it },
-                modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("Write your prompt...") },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
-                keyboardActions = KeyboardActions(
-                    onSend = {
-                        viewModel.run(promptText)
-                    }
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Start) {
+                OutlinedTextField(
+                    value = promptText,
+                    onValueChange = { promptText = it },
+                    modifier = Modifier.weight(1f),
+                    placeholder = { Text("Write your prompt...") },
+                    singleLine = true
                 )
-            )
+                Spacer(modifier = Modifier.width(8.dp))
+                Button(
+                    onClick = { viewModel.run(promptText) },
+                    enabled = !uiState.isRunning && promptText.isNotBlank()
+                ) {
+                    Text("Send")
+                }
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
