@@ -28,6 +28,7 @@ class ChatPanel(ttk.Frame):
         # Configure grid weights
         self.grid_rowconfigure(1, weight=1)
         self.grid_columnconfigure(0, weight=1)
+        self.grid_columnconfigure(1, weight=0)
 
         # Top toolbar
         self.create_toolbar()
@@ -95,8 +96,8 @@ class ChatPanel(ttk.Frame):
 
     def create_steps_area(self):
         """Create step-by-step progress area like BASE44/BOLT.NEW"""
-        steps_container = ttk.LabelFrame(self, text="Build Steps", padding=5)
-        steps_container.grid(row=1, column=1, sticky='ns', padx=(0,5), pady=5)
+        self.steps_container = ttk.LabelFrame(self, text="Build Steps", padding=5)
+        self.steps_container.grid(row=1, column=1, sticky='ns', padx=(0, 5), pady=5)
 
         self.steps = [
             ("create_structure", "Creating project structure"),
@@ -114,7 +115,7 @@ class ChatPanel(ttk.Frame):
         for key, label in self.steps:
             var = tk.StringVar(value=f"⏳ {label}")
             self.step_vars[key] = var
-            lbl = ttk.Label(steps_container, textvariable=var)
+            lbl = ttk.Label(self.steps_container, textvariable=var)
             lbl.pack(anchor='w')
             self.step_labels[key] = lbl
 
@@ -505,13 +506,20 @@ Just describe your app idea and I'll start generating! 🚀"""
             # UI step updates helper
             def ui_step_update(step_key: str, message: str, phase: str):
                 def _do():
-                    if step_key in self.step_vars:
-                        if phase == 'start':
-                            self.step_vars[step_key].set(f"⏳ {message}")
-                        elif phase == 'done':
-                            self.step_vars[step_key].set(f"✅ {message}")
-                        elif phase == 'error':
-                            self.step_vars[step_key].set(f"❌ {message}")
+                    # Create dynamic label if unknown step (e.g., file creations)
+                    if step_key not in self.step_vars:
+                        var = tk.StringVar(value=f"⏳ {message}")
+                        lbl = ttk.Label(self.steps_container, textvariable=var)
+                        lbl.pack(anchor='w')
+                        self.step_vars[step_key] = var
+                        self.step_labels[step_key] = lbl
+
+                    if phase == 'start':
+                        self.step_vars[step_key].set(f"⏳ {message}")
+                    elif phase == 'done':
+                        self.step_vars[step_key].set(f"✅ {message}")
+                    elif phase == 'error':
+                        self.step_vars[step_key].set(f"❌ {message}")
                 self.chat_text.after(0, _do)
 
             # Reset steps to pending
