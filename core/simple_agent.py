@@ -3,7 +3,7 @@ import json
 from typing import Callable, Dict, Any, Optional
 
 from core.llm_manager import LLMManager
-from core.project_generator import ProjectGenerator
+from core.min_generator import MinProjectGenerator
 
 
 class SimpleAppAgent:
@@ -15,7 +15,7 @@ class SimpleAppAgent:
     Exposes a single run() method with a simple progress callback.
     """
 
-    def __init__(self, llm_manager: LLMManager, project_generator: ProjectGenerator) -> None:
+    def __init__(self, llm_manager: LLMManager, project_generator: MinProjectGenerator) -> None:
         self.llm = llm_manager
         self.generator = project_generator
 
@@ -33,8 +33,13 @@ class SimpleAppAgent:
             "Return JSON with keys: project_name, description.\n\n"
             f"REQUEST:\n{request}\n"
         )
-        reply = self.llm.generate_response(prompt, prompt_type='default')
-        plan = self._safe_parse_json(reply)
+        plan: Optional[Dict[str, str]] = None
+        try:
+            reply = self.llm.generate_response(prompt, prompt_type='default')
+            plan = self._safe_parse_json(reply)
+        except Exception:
+            # Fallback to simple deterministic plan without LLM
+            pass
         if not plan:
             plan = {
                 "project_name": "MyAndroidApp",

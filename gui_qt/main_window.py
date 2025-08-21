@@ -20,7 +20,7 @@ from PySide6.QtWidgets import (
 )
 
 from core.llm_manager import LLMManager
-from core.project_generator import ProjectGenerator
+from core.min_generator import MinProjectGenerator
 from core.simple_agent import SimpleAppAgent
 
 
@@ -38,7 +38,12 @@ class MainWindow(QMainWindow):
 
         # Core
         self.llm = LLMManager()
-        self.generator = ProjectGenerator(self.llm)
+        # Ensure LLM manager is initialized; failure is tolerated and agent will fallback
+        try:
+            self.llm.initialize()
+        except Exception:
+            pass
+        self.generator = MinProjectGenerator()
         self.agent = SimpleAppAgent(self.llm, self.generator)
         self.signals = AgentSignals()
 

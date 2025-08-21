@@ -12,8 +12,8 @@ import os
 # Add the current directory to Python path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-# Import and run the main application
-from main import main
+# Import and run the Qt application
+from main_qt import main
 
 if __name__ == "__main__":
     main()
