@@ -84,21 +84,21 @@ class ProjectGenerator:
             # Generate project files
             if progress_callback:
                 progress_callback("gradle_files", "Generating Gradle and settings files", "start")
-            self._generate_project_files(project_path, project_name, description, project_config)
+            self._generate_project_files(project_path, project_name, description, project_config, progress_callback)
             if progress_callback:
                 progress_callback("gradle_files", "Generating Gradle and settings files", "done")
 
             # Generate app-specific code
             if progress_callback:
                 progress_callback("app_code", "Generating app source and resources", "start")
-            self._generate_app_code(project_path, project_name, description, project_config)
+            self._generate_app_code(project_path, project_name, description, project_config, progress_callback)
             if progress_callback:
                 progress_callback("app_code", "Generating app source and resources", "done")
 
             # Create README
             if progress_callback:
                 progress_callback("readme", "Creating README", "start")
-            self._create_readme(project_path, project_name, description)
+            self._create_readme(project_path, project_name, description, progress_callback)
             if progress_callback:
                 progress_callback("readme", "Creating README", "done")
 
@@ -145,13 +145,13 @@ class ProjectGenerator:
         for directory in directories:
             os.makedirs(directory, exist_ok=True)
 
-    def _generate_project_files(self, project_path: str, project_name: str, description: str, config: Dict):
+    def _generate_project_files(self, project_path: str, project_name: str, description: str, config: Dict, progress_callback: Optional[Callable[[str, str, str], None]] = None):
         """Generate project-level files"""
         # settings.gradle
         settings_content = f"""include ':app'
 rootProject.name = '{project_name}'
 """
-        self._write_file(os.path.join(project_path, "settings.gradle"), settings_content, progress_callback=None)
+        self._write_file(os.path.join(project_path, "settings.gradle"), settings_content, progress_callback)
 
         # Project-level build.gradle
         project_build_content = f"""// Top-level build file
@@ -177,7 +177,7 @@ tasks.register("clean", Delete) {{
     delete rootProject.buildDir
 }}
 """
-        self._write_file(os.path.join(project_path, "build.gradle"), project_build_content, progress_callback=None)
+        self._write_file(os.path.join(project_path, "build.gradle"), project_build_content, progress_callback)
 
         # gradle.properties
         gradle_props = """# Project-wide Gradle settings
@@ -186,12 +186,12 @@ android.useAndroidX=true
 android.enableJetifier=true
 kotlin.code.style=official
 """
-        self._write_file(os.path.join(project_path, "gradle.properties"), gradle_props, progress_callback=None)
+        self._write_file(os.path.join(project_path, "gradle.properties"), gradle_props, progress_callback)
 
         # gradle wrapper files
         self._create_gradle_wrapper(project_path)
 
-    def _generate_app_code(self, project_path: str, project_name: str, description: str, config: Dict):
+    def _generate_app_code(self, project_path: str, project_name: str, description: str, config: Dict, progress_callback: Optional[Callable[[str, str, str], None]] = None):
         """Generate app-specific code and resources"""
         app_dir = os.path.join(project_path, "app")
         src_main = os.path.join(app_dir, "src", "main")
@@ -207,24 +207,24 @@ kotlin.code.style=official
 
         # Generate app-level build.gradle
         app_build_content = self._generate_app_build_gradle(package_name, config)
-        self._write_file(os.path.join(app_dir, "build.gradle"), app_build_content)
+        self._write_file(os.path.join(app_dir, "build.gradle"), app_build_content, progress_callback)
 
         # Generate AndroidManifest.xml
         manifest_content = self._generate_android_manifest(package_name, project_name)
-        self._write_file(os.path.join(src_main, "AndroidManifest.xml"), manifest_content)
+        self._write_file(os.path.join(src_main, "AndroidManifest.xml"), manifest_content, progress_callback)
 
         # Generate MainActivity
         main_activity_content = self._generate_main_activity(package_name, project_name)
-        self._write_file(os.path.join(package_dir, "MainActivity.kt"), main_activity_content)
+        self._write_file(os.path.join(package_dir, "MainActivity.kt"), main_activity_content, progress_callback)
 
         # Generate layout files
-        self._generate_layout_files(src_main, project_name)
+        self._generate_layout_files(src_main, project_name, progress_callback)
 
         # Generate resource files
-        self._generate_resource_files(src_main, project_name)
+        self._generate_resource_files(src_main, project_name, progress_callback)
 
         # Generate additional components based on description
-        self._generate_additional_components(package_dir, package_name, description, config)
+        self._generate_additional_components(package_dir, package_name, description, config, progress_callback)
 
     def _generate_app_build_gradle(self, package_name: str, config: Dict) -> str:
         """Generate app-level build.gradle file"""
@@ -363,7 +363,7 @@ class MainActivity : AppCompatActivity() {{
 }}
 """
 
-    def _generate_layout_files(self, src_main: str, project_name: str):
+    def _generate_layout_files(self, src_main: str, project_name: str, progress_callback: Optional[Callable[[str, str, str], None]] = None):
         """Generate layout files"""
         layout_dir = os.path.join(src_main, "res", "layout")
 
@@ -390,9 +390,9 @@ class MainActivity : AppCompatActivity() {{
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 """
-        self._write_file(os.path.join(layout_dir, "activity_main.xml"), main_layout)
+        self._write_file(os.path.join(layout_dir, "activity_main.xml"), main_layout, progress_callback)
 
-    def _generate_resource_files(self, src_main: str, project_name: str):
+    def _generate_resource_files(self, src_main: str, project_name: str, progress_callback: Optional[Callable[[str, str, str], None]] = None):
         """Generate resource files"""
         values_dir = os.path.join(src_main, "res", "values")
 
@@ -403,7 +403,7 @@ class MainActivity : AppCompatActivity() {{
     <string name="welcome_message">Welcome to {project_name}!</string>
 </resources>
 """
-        self._write_file(os.path.join(values_dir, "strings.xml"), strings_content)
+        self._write_file(os.path.join(values_dir, "strings.xml"), strings_content, progress_callback)
 
         # colors.xml
         colors_content = """<?xml version="1.0" encoding="utf-8"?>
@@ -417,7 +417,7 @@ class MainActivity : AppCompatActivity() {{
     <color name="white">#FFFFFFFF</color>
 </resources>
 """
-        self._write_file(os.path.join(values_dir, "colors.xml"), colors_content)
+        self._write_file(os.path.join(values_dir, "colors.xml"), colors_content, progress_callback)
 
         # themes.xml
         theme_name = project_name.replace(' ', '')
@@ -449,12 +449,12 @@ class MainActivity : AppCompatActivity() {{
     </style>
 </resources>
 """
-        self._write_file(os.path.join(values_dir, "themes.xml"), themes_content)
+        self._write_file(os.path.join(values_dir, "themes.xml"), themes_content, progress_callback)
 
         # Create additional resource files
-        self._create_additional_resources(values_dir)
+        self._create_additional_resources(values_dir, progress_callback)
 
-    def _create_additional_resources(self, values_dir: str):
+    def _create_additional_resources(self, values_dir: str, progress_callback: Optional[Callable[[str, str, str], None]] = None):
         """Create additional resource files"""
         # backup_rules.xml
         backup_rules = """<?xml version="1.0" encoding="utf-8"?>
@@ -462,7 +462,7 @@ class MainActivity : AppCompatActivity() {{
     <!-- Exclude specific files or directories from backup -->
 </full-backup-content>
 """
-        self._write_file(os.path.join(values_dir, "backup_rules.xml"), backup_rules)
+        self._write_file(os.path.join(values_dir, "backup_rules.xml"), backup_rules, progress_callback)
 
         # data_extraction_rules.xml
         data_extraction_rules = """<?xml version="1.0" encoding="utf-8"?>
@@ -481,30 +481,30 @@ class MainActivity : AppCompatActivity() {{
     -->
 </data-extraction-rules>
 """
-        self._write_file(os.path.join(values_dir, "data_extraction_rules.xml"), data_extraction_rules)
+        self._write_file(os.path.join(values_dir, "data_extraction_rules.xml"), data_extraction_rules, progress_callback)
 
-    def _generate_additional_components(self, package_dir: str, package_name: str, description: str, config: Dict):
+    def _generate_additional_components(self, package_dir: str, package_name: str, description: str, config: Dict, progress_callback: Optional[Callable[[str, str, str], None]] = None):
         """Generate additional components based on project description"""
         # Analyze description to determine what components to generate
         description_lower = description.lower()
 
         # Generate data models if needed
         if any(keyword in description_lower for keyword in ['database', 'room', 'data', 'model']):
-            self._generate_data_models(package_dir, package_name)
+            self._generate_data_models(package_dir, package_name, progress_callback)
 
         # Generate API service if needed
         if any(keyword in description_lower for keyword in ['api', 'network', 'http', 'retrofit']):
-            self._generate_api_service(package_dir, package_name)
+            self._generate_api_service(package_dir, package_name, progress_callback)
 
         # Generate adapters if needed
         if any(keyword in description_lower for keyword in ['list', 'recycler', 'adapter']):
-            self._generate_adapters(package_dir, package_name)
+            self._generate_adapters(package_dir, package_name, progress_callback)
 
         # Generate view models if needed
         if any(keyword in description_lower for keyword in ['viewmodel', 'mvvm', 'architecture']):
-            self._generate_view_models(package_dir, package_name)
+            self._generate_view_models(package_dir, package_name, progress_callback)
 
-    def _generate_data_models(self, package_dir: str, package_name: str):
+    def _generate_data_models(self, package_dir: str, package_name: str, progress_callback: Optional[Callable[[str, str, str], None]] = None):
         """Generate data models and Room database"""
         data_dir = os.path.join(package_dir, "data")
         os.makedirs(data_dir, exist_ok=True)
@@ -524,7 +524,7 @@ data class Item(
     val isCompleted: Boolean = false
 )
 """
-        self._write_file(os.path.join(data_dir, "Item.kt"), data_model)
+        self._write_file(os.path.join(data_dir, "Item.kt"), data_model, progress_callback)
 
         # DAO
         dao = f"""package {package_name}.data
@@ -533,7 +533,7 @@ import androidx.room.*
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface ItemDao {{
+interface ItemDao {
     @Query("SELECT * FROM items")
     fun getAllItems(): Flow<List<Item>>
 
@@ -545,9 +545,9 @@ interface ItemDao {{
 
     @Delete
     suspend fun deleteItem(item: Item)
-}}
+}
 """
-        self._write_file(os.path.join(data_dir, "ItemDao.kt"), dao)
+        self._write_file(os.path.join(data_dir, "ItemDao.kt"), dao, progress_callback)
 
         # Database
         database = f"""package {package_name}.data
@@ -558,15 +558,15 @@ import androidx.room.RoomDatabase
 import android.content.Context
 
 @Database(entities = [Item::class], version = 1)
-abstract class AppDatabase : RoomDatabase() {{
+abstract class AppDatabase : RoomDatabase() {
     abstract fun itemDao(): ItemDao
 
-    companion object {{
+    companion object {
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
-        fun getDatabase(context: Context): AppDatabase {{
-            return INSTANCE ?: synchronized(this) {{
+        fun getDatabase(context: Context): AppDatabase {
+            return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
@@ -574,14 +574,14 @@ abstract class AppDatabase : RoomDatabase() {{
                 ).build()
                 INSTANCE = instance
                 instance
-            }}
-        }}
-    }}
-}}
+            }
+        }
+    }
+}
 """
-        self._write_file(os.path.join(data_dir, "AppDatabase.kt"), database)
+        self._write_file(os.path.join(data_dir, "AppDatabase.kt"), database, progress_callback)
 
-    def _generate_api_service(self, package_dir: str, package_name: str):
+    def _generate_api_service(self, package_dir: str, package_name: str, progress_callback: Optional[Callable[[str, str, str], None]] = None):
         """Generate API service and network components"""
         network_dir = os.path.join(package_dir, "network")
         os.makedirs(network_dir, exist_ok=True)
@@ -593,15 +593,15 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Body
 
-interface ApiService {{
+interface ApiService {
     @GET("items")
     suspend fun getItems(): List<Item>
 
     @POST("items")
     suspend fun createItem(@Body item: Item): Item
-}}
+}
 """
-        self._write_file(os.path.join(network_dir, "ApiService.kt"), api_service)
+        self._write_file(os.path.join(network_dir, "ApiService.kt"), api_service, progress_callback)
 
         # Network module
         network_module = f"""package {package_name}.network
@@ -609,7 +609,7 @@ interface ApiService {{
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-object NetworkModule {{
+object NetworkModule {
     private const val BASE_URL = "https://api.example.com/"
 
     private val retrofit = Retrofit.Builder()
@@ -618,11 +618,11 @@ object NetworkModule {{
         .build()
 
     val apiService: ApiService = retrofit.create(ApiService::class.java)
-}}
+}
 """
-        self._write_file(os.path.join(network_dir, "NetworkModule.kt"), network_module)
+        self._write_file(os.path.join(network_dir, "NetworkModule.kt"), network_module, progress_callback)
 
-    def _generate_adapters(self, package_dir: str, package_name: str):
+    def _generate_adapters(self, package_dir: str, package_name: str, progress_callback: Optional[Callable[[str, str, str], None]] = None):
         """Generate RecyclerView adapters"""
         adapter_dir = os.path.join(package_dir, "ui", "adapter")
         os.makedirs(adapter_dir, exist_ok=True)
@@ -641,49 +641,49 @@ import {package_name}.databinding.ItemLayoutBinding
 class ItemAdapter(
     private val onItemClick: (Item) -> Unit,
     private val onItemLongClick: (Item) -> Boolean
-) : ListAdapter<Item, ItemAdapter.ItemViewHolder>(ItemDiffCallback()) {{
+) : ListAdapter<Item, ItemAdapter.ItemViewHolder>(ItemDiffCallback()) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {{
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemViewHolder {
         val binding = ItemLayoutBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
         )
         return ItemViewHolder(binding)
-    }}
+    }
 
-    override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {{
+    override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         holder.bind(getItem(position))
-    }}
+    }
 
     inner class ItemViewHolder(
         private val binding: ItemLayoutBinding
-    ) : RecyclerView.ViewHolder(binding.root) {{
+    ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: Item) {{
+        fun bind(item: Item) {
             binding.itemTitle.text = item.title
             binding.itemDescription.text = item.description
             binding.itemCheckbox.isChecked = item.isCompleted
 
-            binding.root.setOnClickListener {{ onItemClick(item) }}
-            binding.root.setOnLongClickListener {{ onItemLongClick(item) }}
-        }}
-    }}
+            binding.root.setOnClickListener { onItemClick(item) }
+            binding.root.setOnLongClickListener { onItemLongClick(item) }
+        }
+    }
 
-    class ItemDiffCallback : DiffUtil.ItemCallback<Item>() {{
-        override fun areItemsTheSame(oldItem: Item, newItem: Item): Boolean {{
+    class ItemDiffCallback : DiffUtil.ItemCallback<Item>() {
+        override fun areItemsTheSame(oldItem: Item, newItem: Item): Boolean {
             return oldItem.id == newItem.id
-        }}
+        }
 
-        override fun areContentsTheSame(oldItem: Item, newItem: Item): Boolean {{
+        override fun areContentsTheSame(oldItem: Item, newItem: Item): Boolean {
             return oldItem == newItem
-        }}
-    }}
-}}
+        }
+    }
+}
 """
-        self._write_file(os.path.join(adapter_dir, "ItemAdapter.kt"), adapter)
+        self._write_file(os.path.join(adapter_dir, "ItemAdapter.kt"), adapter, progress_callback)
 
-    def _generate_view_models(self, package_dir: str, package_name: str):
+    def _generate_view_models(self, package_dir: str, package_name: str, progress_callback: Optional[Callable[[str, str, str], None]] = None):
         """Generate ViewModels"""
         viewmodel_dir = os.path.join(package_dir, "ui", "viewmodel")
         os.makedirs(viewmodel_dir, exist_ok=True)
@@ -699,44 +699,44 @@ import kotlinx.coroutines.launch
 import {package_name}.data.Item
 import {package_name}.data.ItemDao
 
-class MainViewModel(private val itemDao: ItemDao) : ViewModel() {{
+class MainViewModel(private val itemDao: ItemDao) : ViewModel() {
 
     private val _items = MutableLiveData<List<Item>>()
     val items: LiveData<List<Item>> = _items
 
-    init {{
+    init {
         loadItems()
-    }}
+    }
 
-    private fun loadItems() {{
-        viewModelScope.launch {{
-            itemDao.getAllItems().collect {{ items ->
+    private fun loadItems() {
+        viewModelScope.launch {
+            itemDao.getAllItems().collect { items ->
                 _items.value = items
-            }}
-        }}
-    }}
+            }
+        }
+    }
 
-    fun addItem(title: String, description: String) {{
-        viewModelScope.launch {{
+    fun addItem(title: String, description: String) {
+        viewModelScope.launch {
             val item = Item(title = title, description = description)
             itemDao.insertItem(item)
-        }}
-    }}
+        }
+    }
 
-    fun updateItem(item: Item) {{
-        viewModelScope.launch {{
+    fun updateItem(item: Item) {
+        viewModelScope.launch {
             itemDao.updateItem(item)
-        }}
-    }}
+        }
+    }
 
-    fun deleteItem(item: Item) {{
-        viewModelScope.launch {{
+    fun deleteItem(item: Item) {
+        viewModelScope.launch {
             itemDao.deleteItem(item)
-        }}
-    }}
-}}
+        }
+    }
+}
 """
-        self._write_file(os.path.join(viewmodel_dir, "MainViewModel.kt"), viewmodel)
+        self._write_file(os.path.join(viewmodel_dir, "MainViewModel.kt"), viewmodel, progress_callback)
 
     def _create_gradle_wrapper(self, project_path: str):
         """Create Gradle wrapper files"""
@@ -767,7 +767,7 @@ exec "$JAVACMD" "$@"
         except:
             pass
 
-    def _create_readme(self, project_path: str, project_name: str, description: str):
+    def _create_readme(self, project_path: str, project_name: str, description: str, progress_callback: Optional[Callable[[str, str, str], None]] = None):
         """Create README file for the project"""
         readme_content = f"""# {project_name}
 
@@ -813,7 +813,7 @@ cd {project_name}
 
 Generated by Android App Generator
 """
-        self._write_file(os.path.join(project_path, "README.md"), readme_content)
+        self._write_file(os.path.join(project_path, "README.md"), readme_content, progress_callback)
 
     def _write_file(self, file_path: str, content: str, progress_callback: Optional[Callable[[str, str, str], None]] = None):
         """Write content to file with proper encoding and emit progress events"""
