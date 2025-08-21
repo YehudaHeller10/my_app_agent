@@ -3,10 +3,16 @@ import urllib.request
 import threading
 import time
 from typing import Optional, Callable, Dict, Any, List
-from gpt4all import GPT4All
 import json
 import traceback
-import gpt4all
+
+# Lazy/optional imports for gpt4all to allow running UI without heavy deps
+try:
+    from gpt4all import GPT4All as GPT4AllClass
+    import gpt4all as gpt4all_module
+except Exception:  # pragma: no cover - environment without gpt4all
+    GPT4AllClass = None
+    gpt4all_module = None
 
 
 class LLMManager:
@@ -31,7 +37,7 @@ class LLMManager:
         self.backup_model_path = os.path.join(self.models_dir, self.backup_model_name)
 
         # Model instance
-        self.model: Optional[GPT4All] = None
+        self.model: Optional[object] = None
         self.is_initialized = False
         self.is_generating = False
         self.should_stop = False
@@ -228,14 +234,19 @@ Keep responses practical and focused."""
             print(f"Model file found: {self.model_path}")
             print(f"Model file size: {file_size} bytes")
             print(f"Model file readable: {can_read}")
-            print(f"gpt4all version: {gpt4all.__version__ if hasattr(gpt4all, '__version__') else 'unknown'}")
+            version = 'unknown'
+            if gpt4all_module is not None and hasattr(gpt4all_module, '__version__'):
+                version = gpt4all_module.__version__
+            print(f"gpt4all version: {version}")
         except Exception as diag_e:
             print(f"Could not check model file properties: {diag_e}")
 
         print("Loading model...")
         try:
             # Use the new GPT4All API
-            self.model = GPT4All(self.model_name, model_path=self.models_dir)
+            if GPT4AllClass is None:
+                raise RuntimeError("gpt4all is not installed. Install requirements or use Settings to configure a model.")
+            self.model = GPT4AllClass(self.model_name, model_path=self.models_dir)
             print("Model loaded successfully.")
         except Exception as e:
             print(f"Failed to load model: {e}")
@@ -261,7 +272,9 @@ Keep responses practical and focused."""
         print("Loading backup model...")
         try:
             # Use the new GPT4All API
-            self.model = GPT4All(self.backup_model_name, model_path=self.models_dir)
+            if GPT4AllClass is None:
+                raise RuntimeError("gpt4all is not installed. Install requirements or use Settings to configure a model.")
+            self.model = GPT4AllClass(self.backup_model_name, model_path=self.models_dir)
             print("Backup model loaded successfully.")
         except Exception as e:
             print(f"Failed to load backup model: {e}")
@@ -308,8 +321,10 @@ Keep responses practical and focused."""
             # Try to use GPT4All's built-in model downloading
             # This will automatically download a compatible model
             try:
+                if GPT4AllClass is None:
+                    raise RuntimeError("gpt4all is not installed.")
                 # Use GPT4All's default model which is automatically downloaded
-                self.model = GPT4All()  # No model name - uses default
+                self.model = GPT4AllClass()  # No model name - uses default
                 print("Default GPT4All model loaded successfully.")
                 self.model_name = "default_gpt4all_model"
                 return True
@@ -327,7 +342,9 @@ Keep responses practical and focused."""
                 for model_name in known_models:
                     try:
                         print(f"Trying to load {model_name}...")
-                        self.model = GPT4All(model_name, model_path=self.models_dir, allow_download=True)
+                        if GPT4AllClass is None:
+                            raise RuntimeError("gpt4all is not installed.")
+                        self.model = GPT4AllClass(model_name, model_path=self.models_dir, allow_download=True)
                         print(f"Model {model_name} loaded successfully.")
                         self.model_name = model_name
                         return True
@@ -513,7 +530,9 @@ Keep responses practical and focused."""
     def get_available_models(self) -> List[Dict[str, Any]]:
         """Get list of available models"""
         try:
-            return GPT4All.list_models()
+            if GPT4AllClass is None:
+                return []
+            return GPT4AllClass.list_models()
         except Exception as e:
             print(f"Failed to get available models: {e}")
             return []

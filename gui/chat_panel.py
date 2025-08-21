@@ -6,6 +6,7 @@ import os
 from typing import Optional, Callable
 from core.llm_manager import LLMManager
 from core.project_generator import ProjectGenerator
+from core.agent_tool import UserFriendlyAgent
 
 
 class ChatPanel(ttk.Frame):
@@ -19,6 +20,7 @@ class ChatPanel(ttk.Frame):
         self.project_generator = project_generator
         self.generating = False
         self.current_project = None
+        self.agent = UserFriendlyAgent(self.llm_manager)
 
         self.setup_ui()
         self.setup_bindings()
@@ -66,6 +68,8 @@ class ChatPanel(ttk.Frame):
                    command=self.save_chat).pack(side='left', padx=2)
         ttk.Button(controls_frame, text="📁 Load Chat",
                    command=self.load_chat).pack(side='left', padx=2)
+        ttk.Button(controls_frame, text="🤝 AGENT Builder",
+                   command=self.open_agent_builder, style='Primary.TButton').pack(side='left', padx=2)
 
     def create_chat_area(self):
         """Create the main chat display area"""
@@ -117,6 +121,11 @@ class ChatPanel(ttk.Frame):
             lbl = ttk.Label(steps_container, textvariable=var)
             lbl.pack(anchor='w')
             self.step_labels[key] = lbl
+
+        # Agent live progress (for general audience)
+        self.agent_progress_var = tk.StringVar(value="👋 Tell me what to build and click AGENT Builder")
+        self.agent_progress = ttk.Label(steps_container, textvariable=self.agent_progress_var)
+        self.agent_progress.pack(anchor='w', pady=(8,0))
 
     def setup_text_tags(self):
         """Setup text styling tags"""
@@ -201,6 +210,14 @@ class ChatPanel(ttk.Frame):
         )
         self.generate_project_button.pack(fill='x', pady=2)
 
+        # Agent builder quick action
+        self.agent_builder_button = ttk.Button(
+            button_frame,
+            text="🤝 AGENT Builder",
+            command=self.open_agent_builder
+        )
+        self.agent_builder_button.pack(fill='x', pady=2)
+
     def setup_bindings(self):
         """Setup keyboard and event bindings"""
         # Enter to send (Shift+Enter for new line)
@@ -212,6 +229,87 @@ class ChatPanel(ttk.Frame):
 
         # Focus on input when clicking in chat area
         self.chat_text.bind('<Button-1>', lambda e: self.input_text.focus())
+
+    def open_agent_builder(self):
+        """Start the user-friendly AGENT flow that writes files with progress updates."""
+        if self.generating:
+            return
+
+        request = self.input_text.get("1.0", tk.END).strip()
+        if not request:
+            request = simpledialog.askstring(
+                "What should I build?",
+                "Describe what you want me to create (e.g., 'simple weather app readme and sample code').",
+                parent=self
+            ) or ""
+
+        if not request.strip():
+            messagebox.showinfo("Info", "Please describe what to build.")
+            return
+
+        output_dir = filedialog.askdirectory(title="Select output folder for generated files")
+        if not output_dir:
+            return
+
+        # Disable controls during run
+        self.generating = True
+        self.send_button.config(state='disabled')
+        self.stop_button.config(state='disabled')
+        self.generate_project_button.config(state='disabled')
+        self.agent_builder_button.config(state='disabled')
+
+        self.add_message("system", "🤝 Starting friendly AGENT. I'll keep you posted with short updates.")
+        self.agent_progress_var.set("🧭 Planning the simplest way to build this...")
+
+        def progress_cb(phase: str, message: str):
+            def _ui():
+                icon = {
+                    'planning': '🧭',
+                    'preparing': '🗂️',
+                    'generating': '🛠️',
+                    'writing': '💾',
+                    'done': '✅',
+                    'error': '❌'
+                }.get(phase, 'ℹ️')
+                self.agent_progress_var.set(f"{icon} {message}")
+                # Also reflect in chat as system updates
+                self.add_message("system", f"{icon} {message}")
+            self.chat_text.after(0, _ui)
+
+        def file_cb(rel_path: str, abs_path: str):
+            def _ui():
+                self.add_message("assistant", f"Created file: {rel_path}\nPath: {abs_path}")
+            self.chat_text.after(0, _ui)
+
+        def worker():
+            try:
+                result = self.agent.run(
+                    request=request,
+                    output_dir=output_dir,
+                    progress_cb=progress_cb,
+                    file_cb=file_cb
+                )
+
+                def _done():
+                    files_list = "\n".join([f"• {w['path']}" for w in result.get('written', [])])
+                    summary = result.get('summary', 'Done.')
+                    self.add_message("success", f"All done!\n{summary}\n\nFiles:\n{files_list}")
+            
+                self.chat_text.after(0, _done)
+            except Exception as e:
+                def _err():
+                    self.add_message("error", f"Agent error: {e}")
+                self.chat_text.after(0, _err)
+            finally:
+                def _finish():
+                    self.generating = False
+                    self.send_button.config(state='normal')
+                    self.stop_button.config(state='disabled')
+                    self.generate_project_button.config(state='normal')
+                    self.agent_builder_button.config(state='normal')
+                self.chat_text.after(0, _finish)
+
+        threading.Thread(target=worker, daemon=True).start()
 
     def add_welcome_message(self):
         """Add welcome message to chat"""
