@@ -7,6 +7,7 @@ from typing import Optional, Callable
 from core.llm_manager import LLMManager
 from core.project_generator import ProjectGenerator
 from core.agent_tool import UserFriendlyAgent
+from core.simple_agent import SimpleAppAgent
 
 
 class ChatPanel(ttk.Frame):
@@ -21,6 +22,7 @@ class ChatPanel(ttk.Frame):
         self.generating = False
         self.current_project = None
         self.agent = UserFriendlyAgent(self.llm_manager)
+        self.simple_agent = SimpleAppAgent(self.llm_manager, self.project_generator)
 
         self.setup_ui()
         self.setup_bindings()
@@ -37,8 +39,8 @@ class ChatPanel(ttk.Frame):
         # Chat area
         self.create_chat_area()
 
-        # Steps area
-        self.create_steps_area()
+        # Simple progress area
+        self.create_progress_area()
 
         # Bottom input area
         self.create_input_area()
@@ -97,35 +99,13 @@ class ChatPanel(ttk.Frame):
         # Configure text tags for styling
         self.setup_text_tags()
 
-    def create_steps_area(self):
-        """Create step-by-step progress area like BASE44/BOLT.NEW"""
-        steps_container = ttk.LabelFrame(self, text="Build Steps", padding=5)
-        steps_container.grid(row=1, column=1, sticky='ns', padx=(0,5), pady=5)
-
-        self.steps = [
-            ("create_structure", "Creating project structure"),
-            ("gradle_files", "Generating Gradle and settings files"),
-            ("app_code", "Generating app source and resources"),
-            ("readme", "Creating README"),
-            ("sdk_check", "Checking Android SDK/JDK/Gradle"),
-            ("gradle_sync", "Syncing Gradle dependencies"),
-            ("assemble", "Building APK (assembleDebug)")
-        ]
-
-        self.step_vars = {}
-        self.step_labels = {}
-
-        for key, label in self.steps:
-            var = tk.StringVar(value=f"⏳ {label}")
-            self.step_vars[key] = var
-            lbl = ttk.Label(steps_container, textvariable=var)
-            lbl.pack(anchor='w')
-            self.step_labels[key] = lbl
-
-        # Agent live progress (for general audience)
-        self.agent_progress_var = tk.StringVar(value="👋 Tell me what to build and click AGENT Builder")
-        self.agent_progress = ttk.Label(steps_container, textvariable=self.agent_progress_var)
-        self.agent_progress.pack(anchor='w', pady=(8,0))
+    def create_progress_area(self):
+        """Create a simple progress area showing friendly updates"""
+        progress_container = ttk.LabelFrame(self, text="Progress", padding=5)
+        progress_container.grid(row=2, column=0, sticky='ew', padx=5, pady=(0,5))
+        self.agent_progress_var = tk.StringVar(value="👋 Describe your app above and click AGENT Builder")
+        self.agent_progress = ttk.Label(progress_container, textvariable=self.agent_progress_var)
+        self.agent_progress.pack(anchor='w')
 
     def setup_text_tags(self):
         """Setup text styling tags"""
@@ -164,7 +144,7 @@ class ChatPanel(ttk.Frame):
     def create_input_area(self):
         """Create the input area at the bottom"""
         input_frame = ttk.Frame(self)
-        input_frame.grid(row=2, column=0, sticky='ew', padx=5, pady=5)
+        input_frame.grid(row=3, column=0, sticky='ew', padx=5, pady=5)
         input_frame.grid_columnconfigure(0, weight=1)
 
         # Input text widget
@@ -181,42 +161,7 @@ class ChatPanel(ttk.Frame):
         )
         self.input_text.grid(row=0, column=0, sticky='ew', padx=(0, 5))
 
-        # Right side buttons
-        button_frame = ttk.Frame(input_frame)
-        button_frame.grid(row=0, column=1, sticky='ns')
-
-        self.send_button = ttk.Button(
-            button_frame,
-            text="🚀 Generate",
-            command=self.send_message,
-            style='Primary.TButton'
-        )
-        self.send_button.pack(fill='x', pady=2)
-
-        self.stop_button = ttk.Button(
-            button_frame,
-            text="⏹️ Stop",
-            command=self.stop_generation,
-            state='disabled'
-        )
-        self.stop_button.pack(fill='x', pady=2)
-
-        # Project generation button
-        self.generate_project_button = ttk.Button(
-            button_frame,
-            text="📱 Generate Project",
-            command=self.generate_project,
-            style='Success.TButton'
-        )
-        self.generate_project_button.pack(fill='x', pady=2)
-
-        # Agent builder quick action
-        self.agent_builder_button = ttk.Button(
-            button_frame,
-            text="🤝 AGENT Builder",
-            command=self.open_agent_builder
-        )
-        self.agent_builder_button.pack(fill='x', pady=2)
+        # No inline buttons; actions live in the top toolbar for simplicity
 
     def setup_bindings(self):
         """Setup keyboard and event bindings"""
@@ -251,12 +196,8 @@ class ChatPanel(ttk.Frame):
         if not output_dir:
             return
 
-        # Disable controls during run
+        # Disable state during run
         self.generating = True
-        self.send_button.config(state='disabled')
-        self.stop_button.config(state='disabled')
-        self.generate_project_button.config(state='disabled')
-        self.agent_builder_button.config(state='disabled')
 
         self.add_message("system", "🤝 Starting friendly AGENT. I'll keep you posted with short updates.")
         self.agent_progress_var.set("🧭 Planning the simplest way to build this...")
@@ -283,17 +224,12 @@ class ChatPanel(ttk.Frame):
 
         def worker():
             try:
-                result = self.agent.run(
-                    request=request,
-                    output_dir=output_dir,
-                    progress_cb=progress_cb,
-                    file_cb=file_cb
-                )
+                result = self.simple_agent.run(request=request, output_dir=output_dir, progress_cb=progress_cb)
 
                 def _done():
-                    files_list = "\n".join([f"• {w['path']}" for w in result.get('written', [])])
-                    summary = result.get('summary', 'Done.')
-                    self.add_message("success", f"All done!\n{summary}\n\nFiles:\n{files_list}")
+                    prj = result.get('project_path') or 'unknown path'
+                    name = result.get('project_name', 'Your App')
+                    self.add_message("success", f"Project '{name}' is ready.\nLocation: {prj}")
             
                 self.chat_text.after(0, _done)
             except Exception as e:
@@ -303,10 +239,6 @@ class ChatPanel(ttk.Frame):
             finally:
                 def _finish():
                     self.generating = False
-                    self.send_button.config(state='normal')
-                    self.stop_button.config(state='disabled')
-                    self.generate_project_button.config(state='normal')
-                    self.agent_builder_button.config(state='normal')
                 self.chat_text.after(0, _finish)
 
         threading.Thread(target=worker, daemon=True).start()
